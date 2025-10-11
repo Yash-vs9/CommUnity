@@ -2,6 +2,9 @@ package com.Flow.Backend.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "users")
 public class UserModel {
@@ -17,6 +20,37 @@ public class UserModel {
     private String firstName;
     private String lastName;
     private String role="USER";
+    @ElementCollection
+    private List<String> followers=new ArrayList<>();
+
+    private List<String> following=new ArrayList<>();
+
+    @ElementCollection
+    private List<Long> communities=new ArrayList<>();
+
+    public List<Long> getCommunities() {
+        return communities;
+    }
+
+    public List<String> getFollowing() {
+        return following;
+    }
+
+    public void setFollowing(List<String> following) {
+        this.following = following;
+    }
+
+    public void setCommunities(List<Long> communities) {
+        this.communities = communities;
+    }
+
+    public List<String> getFollowers() {
+        return followers;
+    }
+
+    public void setFollowers(List<String> followers) {
+        this.followers = followers;
+    }
 
     public String getRole() {
         return role;
