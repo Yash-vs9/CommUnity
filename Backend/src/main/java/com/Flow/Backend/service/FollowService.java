@@ -27,7 +27,7 @@ public class FollowService {
                             dto.setId(followerUser.getId());
                             dto.setUsername(followerUser.getUsername());
                             // Assuming you have a profilePic field (if not, keep null)
-                            dto.setProfilePic(null);
+                            dto.setProfilePic(followerUser.getProfilePic());
                             return dto;
                         })
                         .orElse(null))
@@ -47,7 +47,7 @@ public class FollowService {
                             dto.setId(followerUser.getId());
                             dto.setUsername(followerUser.getUsername());
                             // Assuming you have a profilePic field (if not, keep null)
-                            dto.setProfilePic(null);
+                            dto.setProfilePic(followerUser.getProfilePic());
                             return dto;
                         })
                         .orElse(null))
@@ -167,4 +167,40 @@ public class FollowService {
         return "You unfollowed " + targetUsername;
     }
 
+    @Transactional
+    public List<FollowerDTO> getReceivedRequests(Long userId){
+        UserModel user=userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found with id: "+userId));
+        List<String> requestsUsernames=user.getRecievedRequest();
+        return requestsUsernames.stream()
+                .map(username -> userRepository.findByUsername(username)
+                        .map(followerUser -> {
+                            FollowerDTO dto = new FollowerDTO();
+                            dto.setId(followerUser.getId());
+                            dto.setUsername(followerUser.getUsername());
+                            dto.setProfilePic(followerUser.getProfilePic());
+                            return dto;
+                        })
+                        .orElse(null))
+                .filter(follower -> follower != null)
+                .collect(Collectors.toList());
+    }
+    @Transactional
+    public List<FollowerDTO> getSendRequests(Long userId){
+        UserModel user=userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found with id: "+userId));
+        List<String> requestsUsernames=user.getSentRequest();
+        return requestsUsernames.stream()
+                .map(username -> userRepository.findByUsername(username)
+                        .map(followerUser -> {
+                            FollowerDTO dto = new FollowerDTO();
+                            dto.setId(followerUser.getId());
+                            dto.setUsername(followerUser.getUsername());
+                            dto.setProfilePic(followerUser.getProfilePic());
+                            return dto;
+                        })
+                        .orElse(null))
+                .filter(follower -> follower != null)
+                .collect(Collectors.toList());
+    }
 }

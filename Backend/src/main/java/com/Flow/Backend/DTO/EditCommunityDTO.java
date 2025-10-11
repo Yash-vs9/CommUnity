@@ -2,7 +2,7 @@ package com.Flow.Backend.DTO;
 
 public class EditCommunityDTO {
     private String description;
-    private Long community_id;
+    private Long id;
 
     public String getDescription() {
         return description;
@@ -12,11 +12,11 @@ public class EditCommunityDTO {
         this.description = description;
     }
 
-    public Long getCommunity_id() {
-        return community_id;
+    public Long getId() {
+        return id;
     }
 
-    public void setCommunity_id(Long community_id) {
-        this.community_id = community_id;
+    public void setId(Long id) {
+        this.id = id;
     }
 }
