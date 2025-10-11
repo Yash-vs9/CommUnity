@@ -1,0 +1,34 @@
+package com.Flow.Backend.Controller;
+
+import com.Flow.Backend.DTO.LoginBody;
+import com.Flow.Backend.DTO.RegisterBody;
+import com.Flow.Backend.model.MyUserDetailService;
+import com.Flow.Backend.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/user")
+public class UserController {
+    @Autowired
+    private MyUserDetailService myUserDetailService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private UserService userService;
+
+    @PostMapping("/register")
+    public ResponseEntity<Map<String,String>> register(@RequestBody RegisterBody registerBody){
+        String jwt=userService.register(registerBody);
+        return ResponseEntity.ok(Map.of("token",jwt));
+    }
+    @PostMapping("/login")
+    public ResponseEntity<Map<String,String>> login(@RequestBody LoginBody loginBody){
+        String jwt= userService.login(loginBody);
+        return  ResponseEntity.ok(Map.of("token",jwt));
+   }
+}

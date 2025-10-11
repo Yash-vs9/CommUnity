@@ -40,7 +40,7 @@ public class webSecurity {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register","/getNumber","/auth/**").permitAll()
+                        .requestMatchers("/user/login", "/user/register","/getNumber","/auth/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
@@ -29,6 +30,7 @@ public class UserService {
     private MyUserDetailService myUserDetailService;
     @Autowired
     private AuthenticationManager authenticationManager;
+    @Transactional
     public String register(RegisterBody registerBody){
         if (userRepository.findByEmail(registerBody.getEmail()).isPresent()) {
             throw new UserAlreadyExistException("Email already exists");
@@ -50,7 +52,7 @@ public class UserService {
 
         return jwt;
     }
-
+    @Transactional
     public String login(LoginBody loginBody) {
         UserModel user = userRepository.findByEmail(loginBody.getEmail())
                 .orElseThrow(() -> new UsernameNotFoundException("This email is not registered"));
