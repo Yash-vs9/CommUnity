@@ -33,9 +33,13 @@ public class CommunityController {
     public List<CommunityProfileDTO> getAllCommunities(){
         return communityService.getUserCommunitiesDTO(SecurityContextHolder.getContext().getAuthentication().getName());
     }
-    @PostMapping("/join/{communityId}")
-    public String joinCommunity(@PathVariable Long communityId){
-        return communityService.joinCommunity(communityId);
+    @PostMapping("/request-join/{communityId}")
+    public String requestToJoin(@PathVariable Long communityId){
+        return communityService.requestToJoin(communityId);
+    }
+    @PostMapping("/accept-join/{communityId}/{username}")
+    public String acceptJoinRequest(@PathVariable Long communityId,@PathVariable String username){
+        return communityService.acceptJoinRequest(communityId,username);
     }
     @PostMapping("/make-admin/{communityId}/{memberUsername}")
     public String makeAdmin(@PathVariable Long communityId,@PathVariable String memberUsername){
@@ -44,5 +48,9 @@ public class CommunityController {
     @PostMapping("/demote-admin/{communityId}/{adminUsername}")
     public String demoteAdmin(@PathVariable Long communityId,@PathVariable String adminUsername){
         return communityService.demoteAdmin(communityId,adminUsername);
+    }
+    @PostMapping("/reject-join/{communityId}/{username}")
+    public String rejectjoinrequest(@PathVariable Long communityId,@PathVariable String username){
+        return communityService.rejectJoinRequest(communityId,username);
     }
 }

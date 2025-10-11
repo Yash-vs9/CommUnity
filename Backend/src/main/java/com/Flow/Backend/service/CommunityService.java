@@ -3,8 +3,11 @@ package com.Flow.Backend.service;
 import com.Flow.Backend.DTO.CommunityProfileDTO;
 import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.DTO.EditCommunityDTO;
+import com.Flow.Backend.DTO.JoinRequestDTO;
 import com.Flow.Backend.model.CommunityModel;
+import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.CommunityRepository;
+import com.Flow.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,8 @@ import java.util.List;
 public class CommunityService {
     @Autowired
     private CommunityRepository communityRepository;
-
+    @Autowired
+    private UserRepository userRepository;
     @Transactional
     public String  createCommunity(CreateCommunity createCommunity){
         CommunityModel community=new CommunityModel();
@@ -32,20 +36,28 @@ public class CommunityService {
     }
     @Transactional
     public void deleteCommunity(Long communityId) {
+        String currentusername=SecurityContextHolder.getContext().getAuthentication().getName();
         CommunityModel community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+        if(!community.getAdmin().contains(currentusername)){
+            throw new RuntimeException("Only an admin or the creator can delete the community details");
+        }
         communityRepository.delete(community);
     }
     @Transactional
     public String editDescription(EditCommunityDTO editCommunityDTO){
+        String currentusername=SecurityContextHolder.getContext().getAuthentication().getName();
         CommunityModel community=communityRepository.findById(editCommunityDTO.getId())
                 .orElseThrow(()->new RuntimeException("Community not found with id: "+editCommunityDTO.getId()));
+        if (!community.getAdmin().contains(currentusername)){
+            throw new RuntimeException("Only an admin or the creator can edit community details");
+        }
         community.setDescription(editCommunityDTO.getDescription());
         communityRepository.save(community);
         return "Description Updated Successfully";
     }
     @Transactional
-    public String joinCommunity(Long communityId) {
+    public String requestToJoin(Long communityId) {
         // Get username of logged-in user
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -57,13 +69,41 @@ public class CommunityService {
         if (community.getMembers().contains(username)) {
             return "You are already a member of this community";
         }
+        if(community.getJoinRequests().contains(username)){
+            return "You have already sent a join request";
+        }
 
         // Add user to members list
-        community.getMembers().add(username);
+        community.getJoinRequests().add(username);
         communityRepository.save(community);
 
-        return "Joined community: " + community.getName();
+        return "Join request sent to community admins";
     }
+    @Transactional
+    public String acceptJoinRequest(Long communityId, String requesterUsername) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+
+        // Only admin/creator can accept
+        if (!community.getAdmin().contains(currentUsername)) {
+            throw new RuntimeException("Only admins can accept join requests");
+        }
+
+        // Check if the user has requested
+        if (!community.getJoinRequests().contains(requesterUsername)) {
+            return requesterUsername + " has not requested to join";
+        }
+
+        // Add user to members and remove from requests
+        community.getMembers().add(requesterUsername);
+        community.getJoinRequests().remove(requesterUsername);
+        communityRepository.save(community);
+
+        return requesterUsername + " has been added to the community";
+    }
+
     @Transactional(readOnly = true)
     public List<CommunityProfileDTO> getUserCommunitiesDTO(String username) {
         List<CommunityModel> communities = communityRepository.findByMembersContainsOrAdminContains(username, username);
@@ -140,6 +180,45 @@ public class CommunityService {
         communityRepository.save(community);
 
         return adminUsername + " has been demoted to member in " + community.getName()+" by "+ currentUsername;
+    }
+    @Transactional(readOnly = true)
+    public List<JoinRequestDTO> getPendingJoinRequests(Long communityId) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+
+        // Map each username in joinRequests to DTO
+        return community.getJoinRequests().stream()
+                .map(username -> {
+                    UserModel user = userRepository.findByUsername(username)
+                            .orElseThrow(() -> new RuntimeException("User not found: " + username));
+                    return new JoinRequestDTO(user.getUsername(), user.getProfilePic());
+                })
+                .toList();
+    }
+    @Transactional
+    public String rejectJoinRequest(Long communityId, String requesterUsername) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+
+        // Only admin/creator can reject
+        if (!community.getAdmin().contains(currentUsername)) {
+            throw new RuntimeException("Only admins can reject join requests");
+        }
+
+        // Check if the user has actually requested
+        if (!community.getJoinRequests().contains(requesterUsername)) {
+            return requesterUsername + " has not requested to join";
+        }
+
+        // Remove from join requests
+        community.getJoinRequests().remove(requesterUsername);
+        communityRepository.save(community);
+
+        return "Join request from " + requesterUsername + " has been rejected from "+currentUsername;
     }
 
 }
