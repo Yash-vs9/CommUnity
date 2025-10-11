@@ -31,6 +31,7 @@ public class CommunityService {
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
         community.setName(createCommunity.getName());
         community.setDescription(createCommunity.getDescription());
+        community.setLogoUrl(createCommunity.getLogoUrl());
         community.setCreatedByUser(username);
         community.getAdmin().add(username);
         community.getMembers().add(username);
