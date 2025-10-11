@@ -31,6 +31,12 @@ public class UserModel {
     @ElementCollection
     private List<Long> communities=new ArrayList<>();
 
+    @ElementCollection
+    private List<String> sentRequest=new ArrayList<>();
+
+    @ElementCollection
+    private List<String> recievedRequest=new ArrayList<>();
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostModel> posts = new ArrayList<>();
