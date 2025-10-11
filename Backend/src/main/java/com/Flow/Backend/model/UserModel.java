@@ -3,7 +3,9 @@ package com.Flow.Backend.model;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -37,6 +39,21 @@ public class UserModel {
     @ElementCollection
     private List<String> recievedRequest=new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name="post_liked",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="post_id")
+    )
+    private Set<PostModel> likedPosts=new HashSet<>();
+
+    public Set<PostModel> getLikedPosts() {
+        return likedPosts;
+    }
+
+    public void setLikedPosts(Set<PostModel> likedPosts) {
+        this.likedPosts = likedPosts;
+    }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostModel> posts = new ArrayList<>();

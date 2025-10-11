@@ -1,8 +1,10 @@
 package com.Flow.Backend.service;
 
+import com.Flow.Backend.DTO.CommentDTO;
 import com.Flow.Backend.DTO.CreatePost;
 import com.Flow.Backend.DTO.EditPostDTO;
 import com.Flow.Backend.exceptions.PostNotFoundException;
+import com.Flow.Backend.model.Comment;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.PostModel;
 import com.Flow.Backend.model.UserModel;
@@ -10,8 +12,12 @@ import com.Flow.Backend.repository.CommunityRepository;
 import com.Flow.Backend.repository.PostRepository;
 import com.Flow.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class PostService {
@@ -56,4 +62,43 @@ public class PostService {
         postRepository.save(post);
         return "Edited Successfully";
     }
+    public String likeOrDislikePost(Long postId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        UserModel user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        PostModel post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("Post not found"));
+
+        boolean alreadyLiked = user.getLikedPosts()
+                .stream()
+                .anyMatch(p -> p.getId().equals(postId));
+
+        if (alreadyLiked) {
+            user.getLikedPosts().remove(post);
+            post.setLikes(post.getLikes() - 1);
+            userRepository.save(user);
+            postRepository.save(post);
+            return "Post unliked successfully";
+        } else {
+            user.getLikedPosts().add(post);
+            post.setLikes(post.getLikes() + 1);
+            userRepository.save(user);
+            postRepository.save(post);
+            return "Post liked successfully";
+        }
+    }
+    public void postComment(CommentDTO comment){
+        PostModel post=postRepository.findById(comment.getPostId())
+                .orElseThrow(()->new PostNotFoundException("Query Not found"));
+        Comment commentObj=new Comment();
+        commentObj.setPost(post);
+        commentObj.setReply(comment.getReply());
+        commentObj.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        post.getComments().add(commentObj);
+        postRepository.save(post);
+    }
+
 }
