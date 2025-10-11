@@ -1,6 +1,7 @@
 package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.CreateCommunity;
+import com.Flow.Backend.DTO.EditCommunityDTO;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,5 +31,13 @@ public class CommunityService {
         CommunityModel community = communityRepository.findById(communityId)
                 .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
         communityRepository.delete(community);
+    }
+    @Transactional
+    public String editDescription(EditCommunityDTO editCommunityDTO){
+        CommunityModel community=communityRepository.findById(editCommunityDTO.getCommunity_id())
+                .orElseThrow(()->new RuntimeException("Community not found with id: "+editCommunityDTO.getCommunity_id()));
+        community.setDescription(editCommunityDTO.getDescription());
+        communityRepository.save(community);
+        return "Description Updated Successfully";
     }
 }
