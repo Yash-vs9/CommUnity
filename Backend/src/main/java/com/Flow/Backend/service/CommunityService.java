@@ -31,7 +31,6 @@ public class CommunityService {
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
         community.setName(createCommunity.getName());
         community.setDescription(createCommunity.getDescription());
-        community.setLogoUrl(createCommunity.getLogoUrl());
         community.setCreatedByUser(username);
         community.getAdmin().add(username);
         community.getMembers().add(username);
@@ -205,7 +204,7 @@ public class CommunityService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new CommunityNotFoundException()"Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Only admin/creator can reject
         if (!community.getAdmin().contains(currentUsername)) {
