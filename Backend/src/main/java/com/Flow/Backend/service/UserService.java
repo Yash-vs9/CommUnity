@@ -3,7 +3,7 @@ package com.Flow.Backend.service;
 import com.Flow.Backend.DTO.LoginBody;
 import com.Flow.Backend.DTO.RegisterBody;
 import com.Flow.Backend.exceptions.UserAlreadyExistException;
-import com.Flow.Backend.filter.JwtFilter;
+
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.UserRepository;
@@ -50,20 +50,20 @@ public class UserService {
 
         return jwt;
     }
-    public String login(LoginBody loginBody){
-        UserModel user=userRepository.findByEmail(loginBody.getEmail())
-                .orElseThrow(()-> new UsernameNotFoundException("This email is not registered"));
-        String username=user.getUsername();
+
+    public String login(LoginBody loginBody) {
+        UserModel user = userRepository.findByEmail(loginBody.getEmail())
+                .orElseThrow(() -> new UsernameNotFoundException("This email is not registered"));
+        String username = user.getUsername();
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username,loginBody.getPassword()));
-        } catch (Exception e){
+                    new UsernamePasswordAuthenticationToken(username, loginBody.getPassword()));
+        } catch (Exception e) {
             throw new BadCredentialsException("Password Incorrect");
         }
-        UserDetails userDetails= myUserDetailService.loadUserByUsername(username);
-        String jwt=jwtUtils.generateToken(userDetails.getUsername());
+        UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
+        String jwt = jwtUtils.generateToken(userDetails.getUsername());
         return jwt;
-
     }
 
 }
