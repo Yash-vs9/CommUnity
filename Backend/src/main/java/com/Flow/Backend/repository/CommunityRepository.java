@@ -15,4 +15,6 @@ public interface CommunityRepository extends JpaRepository<CommunityModel, Long>
 
     @Query("SELECT c FROM CommunityModel c JOIN c.admin a WHERE a = :username")
     List<CommunityModel> findAllByAdminUsername(@Param("username") String username);
+
+    List<CommunityModel> findByMembersContainsOrAdminContains(String member,String admin);
 }
