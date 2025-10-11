@@ -136,4 +136,20 @@ public class UserModel {
     public void setPosts(List<PostModel> posts) {
         this.posts = posts;
     }
+
+    public List<String> getSentRequest() {
+        return sentRequest;
+    }
+
+    public void setSentRequest(List<String> sentRequest) {
+        this.sentRequest = sentRequest;
+    }
+
+    public List<String> getRecievedRequest() {
+        return recievedRequest;
+    }
+
+    public void setRecievedRequest(List<String> recievedRequest) {
+        this.recievedRequest = recievedRequest;
+    }
 }
