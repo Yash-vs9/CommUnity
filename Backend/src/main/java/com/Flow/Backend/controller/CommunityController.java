@@ -1,4 +1,4 @@
-package com.Flow.Backend.Controller;
+package com.Flow.Backend.controller;
 
 import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.DTO.EditCommunityDTO;
