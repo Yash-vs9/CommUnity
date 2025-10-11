@@ -24,8 +24,8 @@ public class PostModel {
 
     @ManyToMany(mappedBy = "likedPosts")
     private Set<UserModel> likedByUsers=new HashSet<>();
-
-
+    @Column(nullable = false)
+    private String createdByUser;
     private int likes;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -127,5 +127,21 @@ public class PostModel {
 
     public void setUser(UserModel user) {
         this.user = user;
+    }
+
+    public Set<UserModel> getLikedByUsers() {
+        return likedByUsers;
+    }
+
+    public void setLikedByUsers(Set<UserModel> likedByUsers) {
+        this.likedByUsers = likedByUsers;
+    }
+
+    public String getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(String createdByUser) {
+        this.createdByUser = createdByUser;
     }
 }

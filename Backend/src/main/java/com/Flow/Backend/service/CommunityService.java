@@ -4,6 +4,10 @@ import com.Flow.Backend.DTO.CommunityProfileDTO;
 import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.DTO.EditCommunityDTO;
 import com.Flow.Backend.DTO.JoinRequestDTO;
+import com.Flow.Backend.exceptions.AccessDeniedException;
+import com.Flow.Backend.exceptions.CommunityMemberException;
+import com.Flow.Backend.exceptions.CommunityNotFoundException;
+import com.Flow.Backend.exceptions.CreatorNotEditException;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.CommunityRepository;
@@ -38,9 +42,9 @@ public class CommunityService {
     public void deleteCommunity(Long communityId) {
         String currentusername=SecurityContextHolder.getContext().getAuthentication().getName();
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
         if(!community.getAdmin().contains(currentusername)){
-            throw new RuntimeException("Only an admin or the creator can delete the community details");
+            throw new AccessDeniedException("Only an admin or the creator can delete the community details");
         }
         communityRepository.delete(community);
     }
@@ -48,9 +52,9 @@ public class CommunityService {
     public String editDescription(EditCommunityDTO editCommunityDTO){
         String currentusername=SecurityContextHolder.getContext().getAuthentication().getName();
         CommunityModel community=communityRepository.findById(editCommunityDTO.getId())
-                .orElseThrow(()->new RuntimeException("Community not found with id: "+editCommunityDTO.getId()));
+                .orElseThrow(()->new CommunityNotFoundException("Community not found with id: "+editCommunityDTO.getId()));
         if (!community.getAdmin().contains(currentusername)){
-            throw new RuntimeException("Only an admin or the creator can edit community details");
+            throw new AccessDeniedException("Only an admin or the creator can edit community details");
         }
         community.setDescription(editCommunityDTO.getDescription());
         communityRepository.save(community);
@@ -63,7 +67,7 @@ public class CommunityService {
 
         // Fetch the community
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Check if user is already a member
         if (community.getMembers().contains(username)) {
@@ -84,11 +88,11 @@ public class CommunityService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Only admin/creator can accept
         if (!community.getAdmin().contains(currentUsername)) {
-            throw new RuntimeException("Only admins can accept join requests");
+            throw new AccessDeniedException("Only admins can accept join requests");
         }
 
         // Check if the user has requested
@@ -103,7 +107,6 @@ public class CommunityService {
 
         return requesterUsername + " has been added to the community";
     }
-
     @Transactional(readOnly = true)
     public List<CommunityProfileDTO> getUserCommunitiesDTO(String username) {
         List<CommunityModel> communities = communityRepository.findByMembersContainsOrAdminContains(username, username);
@@ -127,16 +130,16 @@ public class CommunityService {
 
         // Fetch community
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Check if current user is an admin
         if (!community.getAdmin().contains(currentUsername)) {
-            throw new RuntimeException("Only an admin can promote members");
+            throw new AccessDeniedException("Only an admin can promote members");
         }
 
         // Check if the member is part of this community
         if (!community.getMembers().contains(memberUsername)) {
-            throw new RuntimeException(memberUsername + " is not a member of this community");
+            throw new CommunityMemberException(memberUsername + " is not a member of this community");
         }
 
         // Check if the member is already an admin
@@ -157,17 +160,17 @@ public class CommunityService {
 
         // Fetch community
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Check if current user is an admin
         if (!community.getAdmin().contains(currentUsername)) {
-            throw new RuntimeException("Only an admin can demote another admin");
+            throw new AccessDeniedException("Only an admin can demote another admin");
         }
 
         // The creator (first admin in list) cannot be demoted
         String creatorUsername = community.getCreatedByUser(); // assuming first admin is creator
         if (adminUsername.equals(creatorUsername)) {
-            throw new RuntimeException("The creator of the community cannot be demoted");
+            throw new CreatorNotEditException("The creator of the community cannot be demoted");
         }
 
         // Check if the user is actually an admin
@@ -186,7 +189,7 @@ public class CommunityService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
 
         // Map each username in joinRequests to DTO
         return community.getJoinRequests().stream()
@@ -202,11 +205,11 @@ public class CommunityService {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         CommunityModel community = communityRepository.findById(communityId)
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+                .orElseThrow(() -> new CommunityNotFoundException()"Community not found with id: " + communityId));
 
         // Only admin/creator can reject
         if (!community.getAdmin().contains(currentUsername)) {
-            throw new RuntimeException("Only admins can reject join requests");
+            throw new AccessDeniedException("Only admins can reject join requests");
         }
 
         // Check if the user has actually requested
