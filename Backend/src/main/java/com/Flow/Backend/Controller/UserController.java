@@ -38,13 +38,5 @@ public class UserController {
     public List<CommunityProfileDTO> getUserCommunities(@PathVariable Long userId){
         return userService.getUserCommunitiesById(userId);
    }
-   @GetMapping("/{userId}/getfollowers")
-    public List<FollowerDTO> getFollowersByUserId(@PathVariable Long userId){
-        return userService.getFollowerOfUser(userId);
-   }
 
-    @GetMapping("/{userId}/getfollowing")
-    public List<FollowerDTO> getFollowingByUserId(@PathVariable Long userId){
-        return userService.getFollowingOfUser(userId);
-    }
 }
