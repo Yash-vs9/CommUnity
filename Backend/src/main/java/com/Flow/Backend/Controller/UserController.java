@@ -5,6 +5,7 @@ import com.Flow.Backend.DTO.FollowerDTO;
 import com.Flow.Backend.DTO.LoginBody;
 import com.Flow.Backend.DTO.RegisterBody;
 import com.Flow.Backend.model.MyUserDetailService;
+import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,5 +39,10 @@ public class UserController {
     public List<CommunityProfileDTO> getUserCommunities(@PathVariable Long userId){
         return userService.getUserCommunitiesById(userId);
    }
+    @GetMapping("/search")
+    public ResponseEntity<List<UserModel>> searchUsers(@RequestParam("query") String query) {
+        List<UserModel> users = userService.searchUsers(query);
+        return ResponseEntity.ok(users);
+    }
 
 }

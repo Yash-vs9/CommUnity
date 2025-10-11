@@ -103,6 +103,9 @@ public class UserService {
             return dto;
         }).collect(Collectors.toList());
     }
+    public List<UserModel> searchUsers(String query) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+    }
 
 
 }
