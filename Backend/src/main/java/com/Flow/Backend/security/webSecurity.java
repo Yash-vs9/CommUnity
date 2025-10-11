@@ -40,8 +40,8 @@ public class webSecurity {
                 .csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/user/login", "/user/register","/getNumber","/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/user/login", "/user/register","/profile-pic/","/profile-pic","/auth/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -68,9 +68,8 @@ public class webSecurity {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of(
-                "http://localhost:3000"
-        )); // React dev server
+        config.setAllowedOrigins(List.of("*"));  // Allow all origins temporarily for testing
+
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Allow cookies / Authorization headers
