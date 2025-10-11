@@ -16,7 +16,8 @@ public class CommunityModel {
     @Column(columnDefinition = "TEXT")
     private String description;
     private String logoUrl;
-
+    @Column(nullable = false)
+    private String createdByUser;
     @ElementCollection
     private List<String> members=new ArrayList<>();
 
@@ -80,5 +81,13 @@ public class CommunityModel {
 
     public void setPosts(List<PostModel> posts) {
         this.posts = posts;
+    }
+
+    public String getCreatedByUser() {
+        return createdByUser;
+    }
+
+    public void setCreatedByUser(String createdByUser) {
+        this.createdByUser = createdByUser;
     }
 }
