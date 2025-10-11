@@ -34,8 +34,8 @@ public class CommunityService {
     }
     @Transactional
     public String editDescription(EditCommunityDTO editCommunityDTO){
-        CommunityModel community=communityRepository.findById(editCommunityDTO.getCommunity_id())
-                .orElseThrow(()->new RuntimeException("Community not found with id: "+editCommunityDTO.getCommunity_id()));
+        CommunityModel community=communityRepository.findById(editCommunityDTO.getId())
+                .orElseThrow(()->new RuntimeException("Community not found with id: "+editCommunityDTO.getId()));
         community.setDescription(editCommunityDTO.getDescription());
         communityRepository.save(community);
         return "Description Updated Successfully";

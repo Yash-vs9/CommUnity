@@ -44,4 +44,13 @@ public class FollowController {
     public List<FollowerDTO> getFollowingByUserId(@PathVariable Long userId){
         return followService.getFollowingOfUser(userId);
     }
+
+    @GetMapping("/{userId}/sentRequest")
+    public List<FollowerDTO> getSendRequests(@PathVariable Long userId){
+        return followService.getSendRequests(userId);
+    }
+    @GetMapping("/{userId}/receiverRequest")
+    public  List<FollowerDTO> getReceivedRequests(@PathVariable Long userId){
+        return followService.getReceivedRequests(userId);
+    }
 }
