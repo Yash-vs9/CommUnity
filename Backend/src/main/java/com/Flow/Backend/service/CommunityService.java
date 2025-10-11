@@ -4,8 +4,10 @@ import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Service
 public class CommunityService {
     @Autowired
     private CommunityRepository communityRepository;
