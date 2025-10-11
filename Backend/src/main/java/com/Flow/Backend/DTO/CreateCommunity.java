@@ -4,7 +4,6 @@ public class CreateCommunity {
     private String name;
     private String description;
     private String logoUrl;
-    private String username;
 
     public String getName() {
         return name;
@@ -28,13 +27,5 @@ public class CreateCommunity {
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

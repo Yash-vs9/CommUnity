@@ -4,6 +4,7 @@ import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.repository.CommunityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,17 +13,17 @@ public class CommunityService {
     @Autowired
     private CommunityRepository communityRepository;
 
-
     @Transactional
     public String  createCommunity(CreateCommunity createCommunity){
         CommunityModel community=new CommunityModel();
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
         community.setName(createCommunity.getName());
         community.setDescription(createCommunity.getDescription());
         community.setLogoUrl(createCommunity.getLogoUrl());
-        community.getAdmin().add(createCommunity.getUsername());
-        community.getMembers().add(createCommunity.getUsername());
+        community.getAdmin().add(username);
+        community.getMembers().add(username);
         communityRepository.save(community);
-        return "Community"+createCommunity.getName()+"created successfully";
+        return "Community "+createCommunity.getName()+" created successfully";
     }
     @Transactional
     public void deleteCommunity(Long communityId) {

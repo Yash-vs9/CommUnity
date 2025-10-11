@@ -11,8 +11,8 @@ public class CommunityController {
     @Autowired
     private CommunityService communityService;
 
-    @PostMapping("/getcommunities")
-    public String createcommunity(@RequestBody CreateCommunity createCommunity){
+    @PostMapping("/createCommunities")
+    public String createCommunity(@RequestBody CreateCommunity createCommunity){
         return communityService.createCommunity(createCommunity);
     }
     @DeleteMapping("/{id}/deletecommunity")
