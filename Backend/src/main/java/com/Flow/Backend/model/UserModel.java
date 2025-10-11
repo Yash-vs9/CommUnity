@@ -19,6 +19,8 @@ public class UserModel {
     private String username;
     private String firstName;
     private String lastName;
+    @Column(nullable = true)
+    private String profilePic;
     private String role="USER";
     @ElementCollection
     private List<String> followers=new ArrayList<>();
@@ -111,5 +113,21 @@ public class UserModel {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getProfilePic() {
+        return profilePic;
+    }
+
+    public void setProfilePic(String profilePic) {
+        this.profilePic = profilePic;
+    }
+
+    public List<PostModel> getPosts() {
+        return posts;
+    }
+
+    public void setPosts(List<PostModel> posts) {
+        this.posts = posts;
     }
 }

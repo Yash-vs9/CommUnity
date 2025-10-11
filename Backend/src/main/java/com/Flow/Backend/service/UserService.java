@@ -1,6 +1,7 @@
 package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.CommunityProfileDTO;
+import com.Flow.Backend.DTO.FollowerDTO;
 import com.Flow.Backend.DTO.LoginBody;
 import com.Flow.Backend.DTO.RegisterBody;
 import com.Flow.Backend.exceptions.UserAlreadyExistException;
@@ -76,6 +77,8 @@ public class UserService {
         String jwt = jwtUtils.generateToken(userDetails.getUsername());
         return jwt;
     }
+
+    @Transactional
     public List<CommunityProfileDTO> getUserCommunitiesById(Long userId) {
         UserModel user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
@@ -101,5 +104,44 @@ public class UserService {
             dto.setRole(c.getAdmin().contains(username) ? "admin" : "member");
             return dto;
         }).collect(Collectors.toList());
+    }
+    @Transactional
+    public List<FollowerDTO> getFollowerOfUser(Long userId){
+        UserModel user=userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found with id: "+userId));
+        List<String> followerUsernames=user.getFollowers();
+        return followerUsernames.stream()
+                .map(username -> userRepository.findByUsername(username)
+                        .map(followerUser -> {
+                            FollowerDTO dto = new FollowerDTO();
+                            dto.setId(followerUser.getId());
+                            dto.setUsername(followerUser.getUsername());
+                            // Assuming you have a profilePic field (if not, keep null)
+                            dto.setProfilePic(null);
+                            return dto;
+                        })
+                        .orElse(null))
+                .filter(follower -> follower != null)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public List<FollowerDTO> getFollowingOfUser(Long userId){
+        UserModel user=userRepository.findById(userId)
+                .orElseThrow(()-> new RuntimeException("User not found with id: "+userId));
+        List<String> followerUsernames=user.getFollowing();
+        return followerUsernames.stream()
+                .map(username -> userRepository.findByUsername(username)
+                        .map(followerUser -> {
+                            FollowerDTO dto = new FollowerDTO();
+                            dto.setId(followerUser.getId());
+                            dto.setUsername(followerUser.getUsername());
+                            // Assuming you have a profilePic field (if not, keep null)
+                            dto.setProfilePic(null);
+                            return dto;
+                        })
+                        .orElse(null))
+                .filter(follower -> follower != null)
+                .collect(Collectors.toList());
     }
 }

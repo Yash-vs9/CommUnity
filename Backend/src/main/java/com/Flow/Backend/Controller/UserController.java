@@ -1,6 +1,7 @@
 package com.Flow.Backend.controller;
 
 import com.Flow.Backend.DTO.CommunityProfileDTO;
+import com.Flow.Backend.DTO.FollowerDTO;
 import com.Flow.Backend.DTO.LoginBody;
 import com.Flow.Backend.DTO.RegisterBody;
 import com.Flow.Backend.model.MyUserDetailService;
@@ -37,4 +38,13 @@ public class UserController {
     public List<CommunityProfileDTO> getUserCommunities(@PathVariable Long userId){
         return userService.getUserCommunitiesById(userId);
    }
+   @GetMapping("/{userId}/getfollowers")
+    public List<FollowerDTO> getFollowersByUserId(@PathVariable Long userId){
+        return userService.getFollowerOfUser(userId);
+   }
+
+    @GetMapping("/{userId}/getfollowing")
+    public List<FollowerDTO> getFollowingByUserId(@PathVariable Long userId){
+        return userService.getFollowingOfUser(userId);
+    }
 }
