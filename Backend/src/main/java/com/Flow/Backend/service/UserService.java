@@ -1,6 +1,7 @@
 package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.RegisterBody;
+import com.Flow.Backend.exceptions.UserAlreadyExistException;
 import com.Flow.Backend.filter.JwtFilter;
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
@@ -42,5 +43,5 @@ public class UserService {
 
         return jwt;
     }
-    public String login
+
 }
