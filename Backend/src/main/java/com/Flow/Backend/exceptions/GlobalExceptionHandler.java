@@ -28,4 +28,10 @@ public class GlobalExceptionHandler {
         errorBody.put("message", ex.getMessage());
         return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
+    @ExceptionHandler(PasswordWrongException.class)
+    public ResponseEntity<Map<String, String>> handlePasswordWrongException(PasswordWrongException ex) {
+        Map<String, String> errorBody = new HashMap<>();
+        errorBody.put("message", ex.getMessage());
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+    }
 }
