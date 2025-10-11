@@ -3,6 +3,7 @@ package com.Flow.Backend.service;
 import com.Flow.Backend.DTO.CommentDTO;
 import com.Flow.Backend.DTO.CreatePost;
 import com.Flow.Backend.DTO.EditPostDTO;
+import com.Flow.Backend.exceptions.AccessDeniedException;
 import com.Flow.Backend.exceptions.PostNotFoundException;
 import com.Flow.Backend.model.Comment;
 import com.Flow.Backend.model.CommunityModel;
@@ -40,23 +41,43 @@ public class PostService {
         post.setTitle(createPost.getTitle());
         post.setDescription(createPost.getDescription());
         post.setImageUrl(createPost.getImageurl());
+        post.setCreatedByUser(user.getUsername());
         postRepository.save(post);
 
         return "Post '" + createPost.getTitle() + "' created successfully!";
     }
     @Transactional
     public String deletePost(Long postId) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
         PostModel post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
 
+        CommunityModel community = post.getCommunity();
+
+        boolean isCreator = post.getUser().getUsername().equals(currentUsername);
+        boolean isAdmin = community.getAdmin().contains(currentUsername);
+
+        if (!isCreator && !isAdmin) {
+            throw new AccessDeniedException("You are not authorized to delete this post");
+        }
+
         postRepository.delete(post);
 
-        return "Post deleted successfully!";
+        return "Post deleted successfully by " + currentUsername + "!";
     }
     @Transactional
     public String editPost(EditPostDTO body){
+        String currentUsername=SecurityContextHolder.getContext().getAuthentication().getName();
         PostModel post = postRepository.findById(body.getId())
                 .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + body.getId()));
+        CommunityModel community= post.getCommunity();
+        boolean isCreator = post.getCreatedByUser().equals(currentUsername);
+        boolean isAdmin = community.getAdmin().contains(currentUsername);
+
+        if (!isCreator && !isAdmin) {
+            throw new AccessDeniedException("You are not authorized to edit this post");
+        }
         post.setTitle(body.getTitle());
         post.setDescription(body.getDescription());
         postRepository.save(post);
