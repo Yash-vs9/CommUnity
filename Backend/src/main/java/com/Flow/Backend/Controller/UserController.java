@@ -1,5 +1,6 @@
 package com.Flow.Backend.Controller;
 
+import com.Flow.Backend.DTO.CommunityProfileDTO;
 import com.Flow.Backend.DTO.LoginBody;
 import com.Flow.Backend.DTO.RegisterBody;
 import com.Flow.Backend.model.MyUserDetailService;
@@ -9,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -30,5 +32,9 @@ public class UserController {
     public ResponseEntity<Map<String,String>> login(@RequestBody LoginBody loginBody){
         String jwt= userService.login(loginBody);
         return  ResponseEntity.ok(Map.of("token",jwt));
+   }
+   @GetMapping("/{userId}/communities")
+    public List<CommunityProfileDTO> getUserCommunities(@PathVariable Long userId){
+        return userService.getUserCommunitiesById(userId);
    }
 }
