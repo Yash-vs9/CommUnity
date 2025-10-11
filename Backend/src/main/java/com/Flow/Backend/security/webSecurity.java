@@ -68,8 +68,7 @@ public class webSecurity {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("*"));  // Allow all origins temporarily for testing
-
+        config.setAllowedOrigins(List.of("http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true); // Allow cookies / Authorization headers

@@ -1,6 +1,7 @@
 package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.*;
+import com.Flow.Backend.exceptions.PasswordWrongException;
 import com.Flow.Backend.exceptions.UserAlreadyExistException;
 
 import com.Flow.Backend.model.CommunityModel;
@@ -68,7 +69,7 @@ public class UserService {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(username, loginBody.getPassword()));
         } catch (Exception e) {
-            throw new BadCredentialsException("Password Incorrect");
+            throw new PasswordWrongException("Password Incorrect");
         }
         UserDetails userDetails = myUserDetailService.loadUserByUsername(username);
         String jwt = jwtUtils.generateToken(userDetails.getUsername());
