@@ -23,10 +23,15 @@ public class UserModel {
     @ElementCollection
     private List<String> followers=new ArrayList<>();
 
+    @ElementCollection
     private List<String> following=new ArrayList<>();
 
     @ElementCollection
     private List<Long> communities=new ArrayList<>();
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostModel> posts = new ArrayList<>();
 
     public List<Long> getCommunities() {
         return communities;
