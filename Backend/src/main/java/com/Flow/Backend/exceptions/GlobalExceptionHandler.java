@@ -22,4 +22,10 @@ public class GlobalExceptionHandler {
         errorBody.put("message", ex.getMessage());
         return new ResponseEntity<>(errorBody, HttpStatus.CONFLICT);
     }
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handlePostNotFoundException(PostNotFoundException ex) {
+        Map<String, String> errorBody = new HashMap<>();
+        errorBody.put("message", ex.getMessage());
+        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+    }
 }

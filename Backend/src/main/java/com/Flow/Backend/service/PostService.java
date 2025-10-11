@@ -1,6 +1,8 @@
 package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.CreatePost;
+import com.Flow.Backend.DTO.EditPostDTO;
+import com.Flow.Backend.exceptions.PostNotFoundException;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.PostModel;
 import com.Flow.Backend.model.UserModel;
@@ -44,5 +46,14 @@ public class PostService {
         postRepository.delete(post);
 
         return "Post deleted successfully!";
+    }
+    @Transactional
+    public String editPost(EditPostDTO body){
+        PostModel post = postRepository.findById(body.getId())
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + body.getId()));
+        post.setTitle(body.getTitle());
+        post.setDescription(body.getDescription());
+        postRepository.save(post);
+        return "Edited Successfully";
     }
 }

@@ -1,4 +1,4 @@
-package com.Flow.Backend.Controller;
+package com.Flow.Backend.controller;
 
 import com.Flow.Backend.DTO.CommunityProfileDTO;
 import com.Flow.Backend.DTO.LoginBody;
