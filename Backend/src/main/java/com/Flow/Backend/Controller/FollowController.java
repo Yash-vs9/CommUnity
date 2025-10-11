@@ -25,7 +25,7 @@ public class FollowController {
         return ResponseEntity.ok(followService.acceptFollowRequest(dto));
     }
 
-    @PostMapping("/followback")
+    @PostMapping("/followBack")
     public ResponseEntity<String> followBack(@RequestBody SendFollowDTO dto) {
         return ResponseEntity.ok(followService.followBack(dto));
     }
@@ -35,12 +35,12 @@ public class FollowController {
         return ResponseEntity.ok(followService.unfollow(dto));
     }
 
-    @GetMapping("/{userId}/getfollowers")
+    @GetMapping("/{userId}/getFollowers")
     public List<FollowerDTO> getFollowersByUserId(@PathVariable Long userId){
         return followService.getFollowerOfUser(userId);
     }
 
-    @GetMapping("/{userId}/getfollowing")
+    @GetMapping("/{userId}/getFollowing")
     public List<FollowerDTO> getFollowingByUserId(@PathVariable Long userId){
         return followService.getFollowingOfUser(userId);
     }

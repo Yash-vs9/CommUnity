@@ -143,7 +143,7 @@ public class FollowService {
         return followerUsername + " followed back " + targetUsername;
     }
 
-    // 🔴 Unfollow
+    //  Unfollow
     @Transactional
     public String unfollow(SendFollowDTO dto) {
         String followerUsername = dto.getSenderUsername();
