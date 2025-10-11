@@ -3,7 +3,7 @@ package com.Flow.Backend.DTO;
 public class CreateCommunity {
     private String name;
     private String description;
-
+    private String logoUrl;
 
     public String getName() {
         return name;
@@ -21,4 +21,11 @@ public class CreateCommunity {
         this.description = description;
     }
 
+    public String getLogoUrl() {
+        return logoUrl;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
 }
