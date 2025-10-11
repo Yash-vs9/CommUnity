@@ -24,6 +24,8 @@ public class CommunityModel {
     @ElementCollection
     private List<String> admin=new ArrayList<>();
 
+    @ElementCollection
+    private List<String> joinRequests=new ArrayList<>();
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostModel> posts = new ArrayList<>();
 
@@ -89,5 +91,13 @@ public class CommunityModel {
 
     public void setCreatedByUser(String createdByUser) {
         this.createdByUser = createdByUser;
+    }
+
+    public List<String> getJoinRequests() {
+        return joinRequests;
+    }
+
+    public void setJoinRequests(List<String> joinRequests) {
+        this.joinRequests = joinRequests;
     }
 }
