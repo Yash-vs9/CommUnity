@@ -1,7 +1,6 @@
 package com.Flow.Backend.model;
 
 import com.Flow.Backend.repository.UserRepository;
-import com.clg.consistify.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.userdetails.User;
