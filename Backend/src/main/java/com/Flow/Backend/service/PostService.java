@@ -1,7 +1,48 @@
 package com.Flow.Backend.service;
 
+import com.Flow.Backend.DTO.CreatePost;
+import com.Flow.Backend.model.CommunityModel;
+import com.Flow.Backend.model.PostModel;
+import com.Flow.Backend.model.UserModel;
+import com.Flow.Backend.repository.CommunityRepository;
+import com.Flow.Backend.repository.PostRepository;
+import com.Flow.Backend.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PostService {
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private CommunityRepository communityRepository;
+    @Autowired
+    private PostRepository postRepository;
+
+    @Transactional
+    public String createPost(CreatePost createPost){
+        CommunityModel community = communityRepository.findById(createPost.getCommunityId())
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + createPost.getCommunityId()));
+
+        UserModel user = userRepository.findById(createPost.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + createPost.getUserId()));
+
+        PostModel post = new PostModel();
+        post.setTitle(createPost.getTitle());
+        post.setDescription(createPost.getDescription());
+        post.setImageUrl(createPost.getImageurl());
+        postRepository.save(post);
+
+        return "Post '" + createPost.getTitle() + "' created successfully!";
+    }
+    @Transactional
+    public String deletePost(Long postId) {
+        PostModel post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+
+        postRepository.delete(post);
+
+        return "Post deleted successfully!";
+    }
 }
