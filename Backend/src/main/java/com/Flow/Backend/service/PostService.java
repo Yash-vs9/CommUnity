@@ -4,6 +4,7 @@ import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.exceptions.AccessDeniedException;
 import com.Flow.Backend.exceptions.CommunityNotFoundException;
 import com.Flow.Backend.exceptions.PostNotFoundException;
+import com.Flow.Backend.exceptions.UserNotFoundException;
 import com.Flow.Backend.model.Comment;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.PostModel;
@@ -31,10 +32,10 @@ public class PostService {
     @Transactional
     public String createPost(CreatePost createPost){
         CommunityModel community = communityRepository.findById(createPost.getCommunityId())
-                .orElseThrow(() -> new RuntimeException("Community not found with id: " + createPost.getCommunityId()));
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + createPost.getCommunityId()));
 
-        UserModel user = userRepository.findById(createPost.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + createPost.getUserId()));
+        UserModel user = userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + SecurityContextHolder.getContext().getAuthentication().getName()));
 
         PostModel post = new PostModel();
         post.setTitle(createPost.getTitle());
@@ -144,6 +145,7 @@ public class PostService {
         return "Comment Deleted Succeessfully by "+ currentUsername;
 
     }
+
     @Transactional(readOnly = true)
     public PostWithCommentsDTO getPostWithComments(Long postId) {
         PostModel post = postRepository.findById(postId)
@@ -172,4 +174,36 @@ public class PostService {
 
         return dto;
     }
+//    @Transactional
+//    public List<PostWithCommentsDTO> getMyPost(){
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//
+//        // Fetch user
+//        UserModel user = userRepository.findByUsername(username)
+//                .orElseThrow(() -> new RuntimeException("User not found"));
+//
+//        // Map posts to DTOs
+//        return user.getPosts().stream().map(post -> {
+//            PostWithCommentsDTO dto = new PostWithCommentsDTO();
+//            dto.setId(post.getId());
+//            dto.setTitle(post.getTitle());
+//            dto.setDescription(post.getDescription());
+//            dto.setImageUrl(post.getImageUrl());
+//            dto.setCreatedAt(post.getCreatedAt());
+//            dto.setCommunityName(post.getCommunity().getName());
+//
+//            // Map comments
+//            List<CommentDTO> commentDTOs = post.getComments().stream().map(comment -> {
+//                CommentDTO cDto = new CommentDTO();
+//                cDto.setId(comment.getId());
+//                cDto.setUsername(comment.getUsername());
+//                cDto.setReply(comment.getReply());
+//                return cDto;
+//            }).toList();
+//
+//            dto.setComments(commentDTOs);
+//            return dto;
+//        }).toList();
+//
+//    }
 }
