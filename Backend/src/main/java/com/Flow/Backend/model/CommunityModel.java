@@ -29,8 +29,19 @@ public class CommunityModel {
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostModel> posts = new ArrayList<>();
 
+    @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostModel> events = new ArrayList<>();
+
     public Long getId() {
         return id;
+    }
+
+    public List<PostModel> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<PostModel> events) {
+        this.events = events;
     }
 
     public void setId(Long id) {

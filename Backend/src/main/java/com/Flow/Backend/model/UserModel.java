@@ -55,12 +55,24 @@ public class UserModel {
         return likedPosts;
     }
 
+    public List<PostModel> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<PostModel> events) {
+        this.events = events;
+    }
+
     public void setLikedPosts(Set<PostModel> likedPosts) {
         this.likedPosts = likedPosts;
     }
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostModel> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostModel> events = new ArrayList<>();
+
 
     public List<Long> getCommunities() {
         return communities;
