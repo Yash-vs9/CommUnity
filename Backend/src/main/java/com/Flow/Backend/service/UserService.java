@@ -4,6 +4,7 @@ import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.exceptions.PasswordWrongException;
 import com.Flow.Backend.exceptions.UserAlreadyExistException;
 
+import com.Flow.Backend.exceptions.UserNotFoundException;
 import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
@@ -63,7 +64,7 @@ public class UserService {
     @Transactional
     public String login(LoginBody loginBody) {
         UserModel user = userRepository.findByEmail(loginBody.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("This email is not registered"));
+                .orElseThrow(() -> new UserNotFoundException("This email is not registered"));
         String username = user.getUsername();
         try {
             authenticationManager.authenticate(
