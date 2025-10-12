@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/posts")
 public class PostController {
@@ -44,5 +46,9 @@ public class PostController {
     @GetMapping("/getPostWithComments/{postId}")
     public PostWithCommentsDTO getPostwithComments(@PathVariable Long postId){
         return postService.getPostWithComments(postId);
+    }
+    @GetMapping("/getPostWithComments/loginUser")
+    public List<PostWithCommentsDTO> getPostOfLoginUser(){
+        return postService.getPostsByLoggedInUser();
     }
 }
