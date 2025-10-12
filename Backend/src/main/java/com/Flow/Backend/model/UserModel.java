@@ -51,15 +51,32 @@ public class UserModel {
     )
     private Set<PostModel> likedPosts=new HashSet<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "event_liked",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<EventModel> likedEvents = new HashSet<>();
+
+    public Set<EventModel> getLikedEvents() {
+        return likedEvents;
+    }
+
+    public void setLikedEvents(Set<EventModel> likedEvents) {
+        this.likedEvents = likedEvents;
+    }
+
     public Set<PostModel> getLikedPosts() {
         return likedPosts;
     }
 
-    public List<PostModel> getEvents() {
+
+    public List<EventModel> getEvents() {
         return events;
     }
 
-    public void setEvents(List<PostModel> events) {
+    public void setEvents(List<EventModel> events) {
         this.events = events;
     }
 
@@ -71,7 +88,8 @@ public class UserModel {
     private List<PostModel> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostModel> events = new ArrayList<>();
+    private List<EventModel> events = new ArrayList<>();
+
 
 
     public List<Long> getCommunities() {

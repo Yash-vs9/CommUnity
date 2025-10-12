@@ -28,9 +28,6 @@ public class EventModel {
 
     private int likes;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments;
-
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @ManyToOne
@@ -102,13 +99,6 @@ public class EventModel {
         this.likes = likes;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

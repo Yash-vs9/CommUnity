@@ -17,6 +17,8 @@ public class Comment {
     @JoinColumn(name = "post_id")
     @JsonIgnore
     private PostModel post;
+
+
     private LocalDateTime createdAt = LocalDateTime.now();
     public PostModel getPost() {
         return post;
