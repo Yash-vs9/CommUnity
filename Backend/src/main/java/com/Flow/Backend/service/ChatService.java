@@ -4,11 +4,12 @@ import com.Flow.Backend.model.*;
 import com.Flow.Backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class ChatService {
     @Autowired
     private GeminiService geminiService;
