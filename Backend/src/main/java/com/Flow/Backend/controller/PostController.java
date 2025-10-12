@@ -32,8 +32,12 @@ public class PostController {
     public String likeAndDislike(@PathVariable Long postId){
         return postService.likeOrDislikePost(postId);
     }
-    @PostMapping("/comment")
-    public String comment(@RequestBody CommentDTO commentDTO){
+    @PostMapping("/createComment")
+    public String createComment(@RequestBody CommentDTO commentDTO){
         return postService.postComment(commentDTO);
+    }
+    @PostMapping("/delete/{postId}/{commentId}")
+    public String deletecomment(@PathVariable Long postId,@PathVariable Long commentId){
+        return postService.deleteComment(postId,commentId);
     }
 }
