@@ -3,6 +3,8 @@ package com.Flow.Backend.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Table(name = "comments")
 @Entity
 public class Comment {
@@ -15,7 +17,7 @@ public class Comment {
     @JoinColumn(name = "post_id")
     @JsonIgnore
     private PostModel post;
-
+    private LocalDateTime createdAt = LocalDateTime.now();
     public PostModel getPost() {
         return post;
     }
@@ -47,5 +49,13 @@ public class Comment {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

@@ -261,6 +261,7 @@ public class CommunityService {
                 cDto.setId(comment.getId());
                 cDto.setUsername(comment.getUsername());
                 cDto.setReply(comment.getReply());
+                cDto.setCreatedAt(comment.getCreatedAt());
                 return cDto;
             }).toList();
 
