@@ -6,6 +6,7 @@ import com.Flow.Backend.exceptions.CommunityMemberException;
 import com.Flow.Backend.exceptions.CommunityNotFoundException;
 import com.Flow.Backend.exceptions.CreatorNotEditException;
 import com.Flow.Backend.model.CommunityModel;
+import com.Flow.Backend.model.PostModel;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.CommunityRepository;
 import com.Flow.Backend.repository.UserRepository;
@@ -234,5 +235,37 @@ public class CommunityService {
                     return dto;
                 })
                 .toList();
+    }
+    @Transactional(readOnly = true)
+    public List<PostWithCommentsDTO> getCommunityPosts(Long communityId) {
+        // Fetch community
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+
+        // Fetch posts of that community
+        List<PostModel> posts = community.getPosts();
+
+        // Convert to DTOs
+        return posts.stream().map(post -> {
+            PostWithCommentsDTO dto = new PostWithCommentsDTO();
+            dto.setId(post.getId());
+            dto.setTitle(post.getTitle());
+            dto.setDescription(post.getDescription());
+            dto.setImageUrl(post.getImageUrl());
+            dto.setCreatedAt(post.getCreatedAt());
+            dto.setCreatedByUser(post.getCreatedByUser());
+
+            // Convert comments
+            List<CommentResponseDTO> commentDTOs = post.getComments().stream().map(comment -> {
+                CommentResponseDTO cDto = new CommentResponseDTO();
+                cDto.setId(comment.getId());
+                cDto.setUsername(comment.getUsername());
+                cDto.setReply(comment.getReply());
+                return cDto;
+            }).toList();
+
+            dto.setComments(commentDTOs);
+            return dto;
+        }).toList();
     }
 }
