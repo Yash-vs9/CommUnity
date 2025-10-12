@@ -5,7 +5,6 @@ public class CreatePost {
     private String imageurl;
     private String description;
     private Long communityId;
-    private Long userId;
 
     public String getTitle() {
         return title;
@@ -39,11 +38,4 @@ public class CreatePost {
         this.communityId = communityId;
     }
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
 }

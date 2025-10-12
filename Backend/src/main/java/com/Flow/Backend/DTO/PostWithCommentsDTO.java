@@ -1,5 +1,6 @@
 package com.Flow.Backend.DTO;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class PostWithCommentsDTO {
@@ -10,7 +11,7 @@ public class PostWithCommentsDTO {
     private String createdByUser;
     private int likes;
     private List<CommentResponseDTO> comments;
-
+    private LocalDateTime createdAt;
     public Long getId() {
         return id;
     }
@@ -65,5 +66,13 @@ public class PostWithCommentsDTO {
 
     public void setComments(List<CommentResponseDTO> comments) {
         this.comments = comments;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
