@@ -1,9 +1,6 @@
 package com.Flow.Backend.controller;
 
-import com.Flow.Backend.DTO.AllCommunityDTO;
-import com.Flow.Backend.DTO.CommunityProfileDTO;
-import com.Flow.Backend.DTO.CreateCommunity;
-import com.Flow.Backend.DTO.EditCommunityDTO;
+import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.service.CommunityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -57,5 +54,9 @@ public class CommunityController {
     @GetMapping("/getAll")
     public List<AllCommunityDTO> getAllCommunities(){
         return communityService.getAllCreatedCommunities();
+    }
+    @GetMapping("/{communityId}/posts")
+    public List<PostWithCommentsDTO> getAllPostsOfCommunity(@PathVariable Long communityId){
+        return communityService.getCommunityPosts(communityId);
     }
 }
