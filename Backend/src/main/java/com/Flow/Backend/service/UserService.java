@@ -116,6 +116,7 @@ public class UserService {
                 .orElseThrow(()->new UserNotFoundException("User not found"));
         ProfileDTO dto=new ProfileDTO();
         dto.setUsername(username);
+        dto.setFollow_req(user.getRecievedRequest());
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setProfilePic(user.getProfilePic());

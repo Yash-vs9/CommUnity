@@ -12,8 +12,17 @@ public class ProfileDTO {
     private List<FollowerDTO> follower;
     private List<FollowerDTO> following;
     private String profilePic;
+    private List<String> follow_req;
     private List<PostsDetails> postsDetails;
     private List<CommunityProfileDTO> communities;
+
+    public List<String> getFollow_req() {
+        return follow_req;
+    }
+
+    public void setFollow_req(List<String> follow_req) {
+        this.follow_req = follow_req;
+    }
 
     public String getUsername() {
         return username;
