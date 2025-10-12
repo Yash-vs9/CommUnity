@@ -18,6 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,23 +31,37 @@ public class EventService {
     @Autowired
     private UserRepository userRepository;
     @Transactional
-    public String createEvent(CreateEvent createEvent){
-        CommunityModel community= communityRepository.findById(createEvent.getCommunityId())
-                .orElseThrow(()->new CommunityNotFoundException("Community not found"));
-        UserModel user= userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(()->new UserNotFoundException("user not found"));
+    public String createEvent(CreateEvent createEvent) {
+        // Get the currently logged-in username
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Fetch community and user
+        CommunityModel community = communityRepository.findById(createEvent.getCommunityId())
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + createEvent.getCommunityId()));
+
+        UserModel user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + currentUsername));
+
+        // Create event
         EventModel event = new EventModel();
+        event.setTitle(createEvent.getTitle());
+        event.setDescription(createEvent.getDescription());
         event.setHostedBy(createEvent.getHostedBy());
         event.setLocation(createEvent.getLocation());
-        event.setDescription(createEvent.getDescription());
         event.setCommunity(community);
         event.setUser(user);
-        event.setTitle(createEvent.getTitle());
-        event.getJoinedUsers().add(SecurityContextHolder.getContext().getAuthentication().getName());
 
+        // ✅ Automatically add creator to joinedUsers
+        List<String> joinedUsers = new ArrayList<>();
+        joinedUsers.add(currentUsername);
+        event.setJoinedUsers(joinedUsers);
+
+        // Save event
         eventRepository.save(event);
-        return "Event Created successfully ";
+
+        return "Event created successfully!";
     }
+
     @Transactional
     public String deleteEvent(Long id){
         String username=SecurityContextHolder.getContext().getAuthentication().getName();
