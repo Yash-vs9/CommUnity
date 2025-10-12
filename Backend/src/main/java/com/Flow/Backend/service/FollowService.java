@@ -56,9 +56,8 @@ public class FollowService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public String sendFollowRequest(SendFollowDTO dto) {
+    public String sendFollowRequest(String receiverUsername) {
         String senderUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-        String receiverUsername = dto.getReceiverUsername();
 
         if (senderUsername.equals(receiverUsername)) {
             return "You cannot follow yourself.";
@@ -91,9 +90,8 @@ public class FollowService {
 
     // Accept a follow request
     @Transactional
-    public String acceptFollowRequest(SendFollowDTO dto) {
-        String receiverUsername = dto.getReceiverUsername(); // the one accepting
-        String senderUsername = dto.getSenderUsername(); // the one who sent
+    public String acceptFollowRequest(String senderUsername) {
+        String receiverUsername = SecurityContextHolder.getContext().getAuthentication().getName(); // the one accepting
 
         UserModel receiver = userRepository.findByUsername(receiverUsername)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
@@ -120,9 +118,9 @@ public class FollowService {
 
     // 🟠 Follow back (no request flow, direct follow)
     @Transactional
-    public String followBack(SendFollowDTO dto) {
-        String followerUsername = dto.getSenderUsername(); // one who clicks follow back
-        String targetUsername = dto.getReceiverUsername(); // one who already follows
+    public String followBack(String targetUsername) {
+        String followerUsername = SecurityContextHolder.getContext().getAuthentication().getName(); // one who clicks follow back
+         // one who already follows
 
         UserModel follower = userRepository.findByUsername(followerUsername)
                 .orElseThrow(() -> new RuntimeException("Follower not found"));
@@ -146,9 +144,8 @@ public class FollowService {
 
     //  Unfollow
     @Transactional
-    public String unfollow(SendFollowDTO dto) {
-        String followerUsername = dto.getSenderUsername();
-        String targetUsername = dto.getReceiverUsername();
+    public String unfollow(String targetUsername) {
+        String followerUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         UserModel follower = userRepository.findByUsername(followerUsername)
                 .orElseThrow(() -> new RuntimeException("Follower not found"));

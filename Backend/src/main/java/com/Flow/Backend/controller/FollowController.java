@@ -16,23 +16,23 @@ public class FollowController {
     private FollowService followService;
 
     @PostMapping("/send")
-    public ResponseEntity<String> sendFollow(@RequestBody SendFollowDTO dto) {
-        return ResponseEntity.ok(followService.sendFollowRequest(dto));
+    public ResponseEntity<String> sendFollow(@RequestBody String  username) {
+        return ResponseEntity.ok(followService.sendFollowRequest(username));
     }
 
     @PostMapping("/accept")
-    public ResponseEntity<String> acceptFollow(@RequestBody SendFollowDTO dto) {
-        return ResponseEntity.ok(followService.acceptFollowRequest(dto));
+    public ResponseEntity<String> acceptFollow(@RequestBody String username) {
+        return ResponseEntity.ok(followService.acceptFollowRequest(username));
     }
 
     @PostMapping("/followBack")
-    public ResponseEntity<String> followBack(@RequestBody SendFollowDTO dto) {
-        return ResponseEntity.ok(followService.followBack(dto));
+    public ResponseEntity<String> followBack(@RequestBody String username) {
+        return ResponseEntity.ok(followService.followBack(username));
     }
 
     @PostMapping("/unfollow")
-    public ResponseEntity<String> unfollow(@RequestBody SendFollowDTO dto) {
-        return ResponseEntity.ok(followService.unfollow(dto));
+    public ResponseEntity<String> unfollow(@RequestBody String  username) {
+        return ResponseEntity.ok(followService.unfollow(username));
     }
 
     @GetMapping("/{userId}/getFollowers")
