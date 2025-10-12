@@ -123,6 +123,7 @@ public class PostService {
         commentObj.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
 
         post.getComments().add(commentObj);
+        commentObj.setPost(post);
         postRepository.save(post);
         return "The comment has been created seuccessfully";
     }
