@@ -42,6 +42,8 @@ public class PostService {
         post.setDescription(createPost.getDescription());
         post.setImageUrl(createPost.getImageurl());
         post.setCreatedByUser(user.getUsername());
+        post.setCommunity(community);
+        post.setUser(user);
         postRepository.save(post);
 
         return "Post '" + createPost.getTitle() + "' created successfully!";
