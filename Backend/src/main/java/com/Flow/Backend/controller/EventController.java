@@ -2,9 +2,12 @@ package com.Flow.Backend.controller;
 
 import com.Flow.Backend.DTO.CreateEvent;
 import com.Flow.Backend.DTO.EditEvent;
+import com.Flow.Backend.DTO.EventDetailsDTO;
 import com.Flow.Backend.service.EventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/events")
@@ -29,5 +32,13 @@ public class EventController {
     @GetMapping("/joinEvent/{id}")
     public String joinEvent(@PathVariable Long id){
         return eventService.joinEvent(id);
+    }
+    @GetMapping("/latest5Events")
+    public List<EventDetailsDTO> latest5EventsDetails(){
+        return eventService.getLatestFiveEvents();
+    }
+    @GetMapping("/allEvents")
+    public List<EventDetailsDTO> getAllEvents(){
+        return eventService.getAllEvents();
     }
 }

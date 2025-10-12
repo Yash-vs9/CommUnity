@@ -2,6 +2,7 @@ package com.Flow.Backend.service;
 
 import com.Flow.Backend.DTO.CreateEvent;
 import com.Flow.Backend.DTO.EditEvent;
+import com.Flow.Backend.DTO.EventDetailsDTO;
 import com.Flow.Backend.exceptions.AccessDeniedException;
 import com.Flow.Backend.exceptions.CommunityNotFoundException;
 import com.Flow.Backend.exceptions.EventNotFoundException;
@@ -16,6 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EventService {
@@ -95,5 +99,53 @@ public class EventService {
         eventRepository.save(event);
 
         return "You have successfully joined the event: " + event.getTitle();
+    }
+    @Transactional
+    public List<EventDetailsDTO> getLatestFiveEvents() {
+        List<EventModel> events = eventRepository.findLatestFiveEvents();
+
+        // Map each EventModel to EventDetailsDTO
+        return events.stream().map(event -> {
+            EventDetailsDTO dto = new EventDetailsDTO();
+            dto.setId(event.getId());
+            dto.setTitle(event.getTitle());
+            dto.setDescription(event.getDescription());
+            dto.setHostedBy(event.getHostedBy());
+            dto.setLocation(event.getLocation());
+            dto.setCreatedAt(event.getCreatedAt());
+
+            if (event.getCommunity() != null) {
+                dto.setCommunityId(event.getCommunity().getId());
+                dto.setCommunityName(event.getCommunity().getName());
+            } else {
+                dto.setCommunityId(null);
+                dto.setCommunityName("General");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+    public List<EventDetailsDTO> getAllEvents() {
+        List<EventModel> events = eventRepository.findAllByOrderByCreatedAtDesc();
+
+        return events.stream().map(event -> {
+            EventDetailsDTO dto = new EventDetailsDTO();
+            dto.setId(event.getId());
+            dto.setTitle(event.getTitle());
+            dto.setDescription(event.getDescription());
+            dto.setHostedBy(event.getHostedBy());
+            dto.setLocation(event.getLocation());
+            dto.setCreatedAt(event.getCreatedAt());
+
+            if (event.getCommunity() != null) {
+                dto.setCommunityId(event.getCommunity().getId());
+                dto.setCommunityName(event.getCommunity().getName());
+            } else {
+                dto.setCommunityId(null);
+                dto.setCommunityName("General");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
