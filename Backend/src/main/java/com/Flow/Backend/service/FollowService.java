@@ -5,6 +5,7 @@ import com.Flow.Backend.DTO.SendFollowDTO;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,7 +57,7 @@ public class FollowService {
     }
     @Transactional
     public String sendFollowRequest(SendFollowDTO dto) {
-        String senderUsername = dto.getSenderUsername();
+        String senderUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         String receiverUsername = dto.getReceiverUsername();
 
         if (senderUsername.equals(receiverUsername)) {
