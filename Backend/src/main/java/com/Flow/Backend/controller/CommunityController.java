@@ -54,7 +54,7 @@ public class CommunityController {
     public String rejectjoinrequest(@PathVariable Long communityId,@PathVariable String username){
         return communityService.rejectJoinRequest(communityId,username);
     }
-    @GetMapping("/getall")
+    @GetMapping("/getAll")
     public List<AllCommunityDTO> getAllCommunities(){
         return communityService.getAllCreatedCommunities();
     }

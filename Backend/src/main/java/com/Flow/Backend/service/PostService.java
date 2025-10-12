@@ -110,7 +110,7 @@ public class PostService {
             return "Post liked successfully";
         }
     }
-    public void postComment(CommentDTO comment){
+    public String  postComment(CommentDTO comment){
         PostModel post=postRepository.findById(comment.getPostId())
                 .orElseThrow(()->new PostNotFoundException("Query Not found"));
         Comment commentObj=new Comment();
@@ -120,6 +120,7 @@ public class PostService {
 
         post.getComments().add(commentObj);
         postRepository.save(post);
+        return "The comment has been created seuccessfully";
     }
 
 }

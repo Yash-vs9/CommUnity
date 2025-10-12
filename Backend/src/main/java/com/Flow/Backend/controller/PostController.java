@@ -1,9 +1,11 @@
 package com.Flow.Backend.controller;
 
+import com.Flow.Backend.DTO.CommentDTO;
 import com.Flow.Backend.DTO.CreatePost;
 import com.Flow.Backend.DTO.EditPostDTO;
 import com.Flow.Backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,5 +27,13 @@ public class PostController {
     @PostMapping("/editPost")
     public String editPost(@RequestBody EditPostDTO editPostDTO){
         return postService.editPost(editPostDTO);
+    }
+    @PostMapping("/likeAndDislike/{postId}")
+    public String likeAndDislike(@PathVariable Long postId){
+        return postService.likeOrDislikePost(postId);
+    }
+    @PostMapping("/comment")
+    public String comment(@RequestBody CommentDTO commentDTO){
+        return postService.postComment(commentDTO);
     }
 }
