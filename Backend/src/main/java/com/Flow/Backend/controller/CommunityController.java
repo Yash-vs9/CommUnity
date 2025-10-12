@@ -63,4 +63,8 @@ public class CommunityController {
     public CommunityDetailsDTO getCommunityDetails(@PathVariable Long communityId){
         return communityService.getCommunityDetails(communityId);
     }
+    @PostMapping("/join/{communityId}")
+    public String joinCommunityDirect(@PathVariable Long communityId){
+        return communityService.join(communityId);
+    }
 }
