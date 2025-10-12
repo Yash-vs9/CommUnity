@@ -1,9 +1,6 @@
 package com.Flow.Backend.service;
 
-import com.Flow.Backend.DTO.CommunityProfileDTO;
-import com.Flow.Backend.DTO.CreateCommunity;
-import com.Flow.Backend.DTO.EditCommunityDTO;
-import com.Flow.Backend.DTO.JoinRequestDTO;
+import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.exceptions.AccessDeniedException;
 import com.Flow.Backend.exceptions.CommunityMemberException;
 import com.Flow.Backend.exceptions.CommunityNotFoundException;
@@ -224,4 +221,18 @@ public class CommunityService {
         return "Join request from " + requesterUsername + " has been rejected from "+currentUsername;
     }
 
+    @Transactional
+    public  List<AllCommunityDTO> getAllCreatedCommunities(){
+        List<CommunityModel> communities = communityRepository.findAll();
+        return communities.stream()
+                .map(c->{
+                    AllCommunityDTO dto = new AllCommunityDTO();
+                    dto.setId(c.getId());
+                    dto.setDescription(c.getDescription());
+                    dto.setName(c.getName());
+                    dto.setLogoUrl(c.getLogoUrl());
+                    return dto;
+                })
+                .toList();
+    }
 }

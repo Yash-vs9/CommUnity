@@ -1,5 +1,6 @@
 package com.Flow.Backend.controller;
 
+import com.Flow.Backend.DTO.AllCommunityDTO;
 import com.Flow.Backend.DTO.CommunityProfileDTO;
 import com.Flow.Backend.DTO.CreateCommunity;
 import com.Flow.Backend.DTO.EditCommunityDTO;
@@ -29,8 +30,8 @@ public class CommunityController {
     public String updateDescription(@RequestBody EditCommunityDTO editCommunityDTO){
         return communityService.editDescription(editCommunityDTO);
     }
-    @GetMapping("/getall")
-    public List<CommunityProfileDTO> getAllCommunities(){
+    @GetMapping("/getAllByUser")
+    public List<CommunityProfileDTO> getAllCommunitiesByUser(){
         return communityService.getUserCommunitiesDTO(SecurityContextHolder.getContext().getAuthentication().getName());
     }
     @PostMapping("/request-join/{communityId}")
@@ -52,5 +53,9 @@ public class CommunityController {
     @PostMapping("/reject-join/{communityId}/{username}")
     public String rejectjoinrequest(@PathVariable Long communityId,@PathVariable String username){
         return communityService.rejectJoinRequest(communityId,username);
+    }
+    @GetMapping("/getall")
+    public List<AllCommunityDTO> getAllCommunities(){
+        return communityService.getAllCreatedCommunities();
     }
 }
