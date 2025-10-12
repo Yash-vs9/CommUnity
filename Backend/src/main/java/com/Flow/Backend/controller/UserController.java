@@ -1,9 +1,6 @@
 package com.Flow.Backend.controller;
 
-import com.Flow.Backend.DTO.CommunityProfileDTO;
-import com.Flow.Backend.DTO.FollowerDTO;
-import com.Flow.Backend.DTO.LoginBody;
-import com.Flow.Backend.DTO.RegisterBody;
+import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.service.UserService;
@@ -45,7 +42,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
     @GetMapping("/getProfile")
-    public UserModel getProfile(){
+    public ProfileDTO getProfile(){
         return userService.getProfile();
     }
 
