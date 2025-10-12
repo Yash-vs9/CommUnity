@@ -21,6 +21,10 @@ public class UserModel {
     private String username;
     private String firstName;
     private String lastName;
+
+    @Column(columnDefinition = "TEXT")
+    private String Bio;
+
     @Column(nullable = true)
     private String profilePic;
     private String role="USER";
@@ -168,5 +172,13 @@ public class UserModel {
 
     public void setRecievedRequest(List<String> recievedRequest) {
         this.recievedRequest = recievedRequest;
+    }
+
+    public String getBio() {
+        return Bio;
+    }
+
+    public void setBio(String bio) {
+        Bio = bio;
     }
 }

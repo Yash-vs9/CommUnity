@@ -121,6 +121,7 @@ public class UserService {
         dto.setProfilePic(user.getProfilePic());
         dto.setEmail(user.getEmail());
         dto.setId(user.getId());
+        dto.setBio(user.getBio());
         List<FollowerDTO> followers = user.getFollowers().stream()
                 .map(followerUsername -> userRepository.findByUsername(followerUsername)
                         .map(followerUser -> {
@@ -179,4 +180,101 @@ public class UserService {
         return dto;
     }
 
+    @Transactional
+    public String editProfilePic(String url){
+        UserModel user=userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        user.setProfilePic(url);
+        userRepository.save(user);
+        return "Profile Pic Changed Successfully";
+    }
+    @Transactional
+    public String editName(EditNameDTO editNameDTO){
+        UserModel user=userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+        if (!editNameDTO.getFirstName().isEmpty()&& !editNameDTO.getFirstName().equals(" ")){
+            user.setFirstName(editNameDTO.getFirstName());
+        }
+        user.setLastName(editNameDTO.getLastName());
+        userRepository.save(user);
+        return "Full Name Changed Successfully";
+    }
+    @Transactional
+    public String editBio(String bio){
+        UserModel user=userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()->new UserNotFoundException("User not Found"));
+        user.setBio(bio);
+        userRepository.save(user);
+        return "Bio Changed Successfully";
+    }
+    @Transactional
+    public ProfileDTO getOthersProfile(Long id){
+        UserModel user = userRepository.findById(id)
+                .orElseThrow(()->new UserNotFoundException("User not found"));
+        String username= user.getUsername();;
+        ProfileDTO dto=new ProfileDTO();
+        dto.setUsername(user.getUsername());
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setProfilePic(user.getProfilePic());
+        dto.setEmail(user.getEmail());
+        dto.setId(user.getId());
+        dto.setBio(user.getBio());
+        List<FollowerDTO> followers = user.getFollowers().stream()
+                .map(followerUsername -> userRepository.findByUsername(followerUsername)
+                        .map(followerUser -> {
+                            FollowerDTO followDTO = new FollowerDTO();
+                            followDTO.setId(followerUser.getId());
+                            followDTO.setUsername(followerUser.getUsername());
+                            followDTO.setProfilePic(followerUser.getProfilePic());
+                            return followDTO;
+                        })
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        List<FollowerDTO> following = user.getFollowing().stream()
+                .map(followingUsername -> userRepository.findByUsername(followingUsername)
+                        .map(followerUser -> {
+                            FollowerDTO followDTO = new FollowerDTO();
+                            followDTO.setId(followerUser.getId());
+                            followDTO.setUsername(followerUser.getUsername());
+                            followDTO.setProfilePic(followerUser.getProfilePic());
+                            return followDTO;
+                        })
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+        List<CommunityProfileDTO> communities = communityRepository
+                .findByMembersContainsOrAdminContains(username, username)
+                .stream()
+                .map(c -> {
+                    String role = c.getAdmin().contains(username) ? "ADMIN" : "MEMBER";
+                    CommunityProfileDTO communityDTO = new CommunityProfileDTO();
+                    communityDTO.setId(c.getId());
+                    communityDTO.setName(c.getName());
+                    communityDTO.setLogoUrl(c.getLogoUrl());
+                    communityDTO.setRole(role);
+                    return communityDTO;
+                })
+                .toList();
+        List<PostsDetails> posts = postRepository.findByCreatedByUser(username)
+                .stream()
+                .map(p -> {
+                    PostsDetails postDTO = new PostsDetails();
+                    postDTO.setId(p.getId());
+                    postDTO.setTitle(p.getTitle());
+                    postDTO.setDescription(p.getDescription());
+                    postDTO.setImageUrl(p.getImageUrl());
+                    postDTO.setCreatedAt(p.getCreatedAt());
+                    postDTO.setCommunityId(p.getCommunity() != null ? p.getCommunity().getId() : null);
+                    return postDTO;
+                })
+                .toList();
+        dto.setFollower(followers);
+        dto.setFollowing(following);
+        dto.setCommunities(communities);
+        dto.setPostsDetails(posts);
+        return dto;
+    }
 }

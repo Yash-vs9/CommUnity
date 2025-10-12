@@ -8,6 +8,7 @@ public class ProfileDTO {
     private String firstName;
     private String lastName;
     private String email;
+    private String bio;
     private List<FollowerDTO> follower;
     private List<FollowerDTO> following;
     private String profilePic;
@@ -92,5 +93,13 @@ public class ProfileDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
     }
 }
