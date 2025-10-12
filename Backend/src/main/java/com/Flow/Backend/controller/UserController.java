@@ -45,5 +45,20 @@ public class UserController {
     public ProfileDTO getProfile(){
         return userService.getProfile();
     }
-
+    @PostMapping("/editProfilePic")
+    public String editProfilePic(@RequestBody String photoUrl){
+        return userService.editProfilePic(photoUrl);
+    }
+    @PostMapping("/editName")
+    public String editName(@RequestBody EditNameDTO editNameDTO){
+        return userService.editName(editNameDTO);
+    }
+    @PostMapping("/editBio")
+    public String editBio(@RequestBody String bio){
+        return userService.editBio(bio);
+    }
+    @GetMapping("/othersProfile/{id}")
+    public ProfileDTO getOtherProfile(@PathVariable Long id){
+        return userService.getOthersProfile(id);
+    }
 }
