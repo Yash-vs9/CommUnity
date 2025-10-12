@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -104,9 +105,12 @@ public class UserService {
             return dto;
         }).collect(Collectors.toList());
     }
-    public List<UserModel> searchUsers(String query) {
-        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(query, query);
+    public List<UserModel> searchUsers(String username) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(username, username);
     }
-
+    public UserModel getProfile(){
+        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
+                .orElseThrow(()-> new UserNotFoundException("User not found"));
+    }
 
 }
