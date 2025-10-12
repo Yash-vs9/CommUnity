@@ -254,6 +254,7 @@ public class CommunityService {
             dto.setImageUrl(post.getImageUrl());
             dto.setCreatedAt(post.getCreatedAt());
             dto.setCreatedByUser(post.getCreatedByUser());
+            dto.setLikes(post.getLikes());
 
             // Convert comments
             List<CommentResponseDTO> commentDTOs = post.getComments().stream().map(comment -> {
@@ -268,5 +269,53 @@ public class CommunityService {
             dto.setComments(commentDTOs);
             return dto;
         }).toList();
+    }
+    @Transactional(readOnly = true)
+    public CommunityDetailsDTO getCommunityDetails(Long communityId) {
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new RuntimeException("Community not found with id: " + communityId));
+
+        CommunityDetailsDTO dto = new CommunityDetailsDTO();
+        dto.setId(community.getId());
+        dto.setName(community.getName());
+        dto.setDescription(community.getDescription());
+        dto.setCreatedByUser(community.getCreatedByUser());
+
+        List<CommunityMemberDTO> memberDTOs = new java.util.ArrayList<>();
+
+        // Add creator (always ADMIN)
+        CommunityMemberDTO creatorDTO = new CommunityMemberDTO();
+        creatorDTO.setUsername(community.getCreatedByUser());
+        creatorDTO.setRole("CREATOR");
+        memberDTOs.add(creatorDTO);
+
+        // Add admins
+        if (community.getAdmin() != null) {
+            for (String admin : community.getAdmin()) {
+                if (!admin.equals(community.getCreatedByUser())) { // skip creator
+                    CommunityMemberDTO adminDTO = new CommunityMemberDTO();
+                    adminDTO.setUsername(admin);
+                    adminDTO.setRole("ADMIN");
+                    memberDTOs.add(adminDTO);
+                }
+            }
+        }
+
+        // Add members
+        if (community.getMembers() != null) {
+            for (String member : community.getMembers()) {
+                // skip if already admin or creator
+                if (!member.equals(community.getCreatedByUser()) &&
+                        (community.getAdmin() == null || !community.getAdmin().contains(member))) {
+                    CommunityMemberDTO memberDTO = new CommunityMemberDTO();
+                    memberDTO.setUsername(member);
+                    memberDTO.setRole("MEMBER");
+                    memberDTOs.add(memberDTO);
+                }
+            }
+        }
+
+        dto.setMembers(memberDTOs);
+        return dto;
     }
 }

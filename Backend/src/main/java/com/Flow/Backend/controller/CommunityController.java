@@ -59,4 +59,8 @@ public class CommunityController {
     public List<PostWithCommentsDTO> getAllPostsOfCommunity(@PathVariable Long communityId){
         return communityService.getCommunityPosts(communityId);
     }
+    @GetMapping("/{communityId}/communityDetails")
+    public CommunityDetailsDTO getCommunityDetails(@PathVariable Long communityId){
+        return communityService.getCommunityDetails(communityId);
+    }
 }
