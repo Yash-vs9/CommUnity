@@ -10,33 +10,44 @@ import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<Map<String, String>> handleInvalidToken(InvalidTokenException ex) {
         Map<String, String> errorBody = new HashMap<>();
         errorBody.put("message", ex.getMessage());
         return new ResponseEntity<>(errorBody, HttpStatus.UNAUTHORIZED);
     }
+
     @ExceptionHandler(UserAlreadyExistException.class)
     public ResponseEntity<Map<String, String>> handleUserAlreadyExistException(UserAlreadyExistException ex) {
         Map<String, String> errorBody = new HashMap<>();
         errorBody.put("message", ex.getMessage());
         return new ResponseEntity<>(errorBody, HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(PostNotFoundException.class)
     public ResponseEntity<Map<String, String>> handlePostNotFoundException(PostNotFoundException ex) {
         Map<String, String> errorBody = new HashMap<>();
         errorBody.put("message", ex.getMessage());
         return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(PasswordWrongException.class)
     public ResponseEntity<Map<String, String>> handlePasswordWrongException(PasswordWrongException ex) {
         Map<String, String> errorBody = new HashMap<>();
         errorBody.put("message", ex.getMessage());
-        return new ResponseEntity<>(errorBody, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorBody, HttpStatus.UNAUTHORIZED); // Changed to 401
     }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleUserNotFoundException(UserNotFoundException ex) {
+        Map<String, String> errorBody = new HashMap<>();
+        errorBody.put("message", ex.getMessage());
+        return new ResponseEntity<>(errorBody, HttpStatus.BAD_REQUEST); // 400 for unregistered email
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ex.getMessage());
     }
-
 }
