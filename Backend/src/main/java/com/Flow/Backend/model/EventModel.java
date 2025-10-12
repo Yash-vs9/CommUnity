@@ -3,7 +3,7 @@ package com.Flow.Backend.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,13 +20,11 @@ public class EventModel {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @ManyToMany(mappedBy = "likedEvents")
-    private Set<UserModel> likedByUsers = new HashSet<>();
+    List<String> joinedUsers=new ArrayList<>();
 
     @Column(nullable = false)
-    private String createdByUser;
-
-    private int likes;
+    private String hostedBy;
+    private String location;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -75,28 +73,12 @@ public class EventModel {
         this.description = description;
     }
 
-    public Set<UserModel> getLikedByUsers() {
-        return likedByUsers;
+    public String getHostedBy() {
+        return hostedBy;
     }
 
-    public void setLikedByUsers(Set<UserModel> likedByUsers) {
-        this.likedByUsers = likedByUsers;
-    }
-
-    public String getCreatedByUser() {
-        return createdByUser;
-    }
-
-    public void setCreatedByUser(String createdByUser) {
-        this.createdByUser = createdByUser;
-    }
-
-    public int getLikes() {
-        return likes;
-    }
-
-    public void setLikes(int likes) {
-        this.likes = likes;
+    public void setHostedBy(String hostedBy) {
+        this.hostedBy = hostedBy;
     }
 
 
@@ -122,5 +104,21 @@ public class EventModel {
 
     public void setUser(UserModel user) {
         this.user = user;
+    }
+
+    public List<String> getJoinedUsers() {
+        return joinedUsers;
+    }
+
+    public void setJoinedUsers(List<String> joinedUsers) {
+        this.joinedUsers = joinedUsers;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

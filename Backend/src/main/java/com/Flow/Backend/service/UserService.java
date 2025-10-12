@@ -6,9 +6,11 @@ import com.Flow.Backend.exceptions.UserAlreadyExistException;
 
 import com.Flow.Backend.exceptions.UserNotFoundException;
 import com.Flow.Backend.model.CommunityModel;
+import com.Flow.Backend.model.EventModel;
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.CommunityRepository;
+import com.Flow.Backend.repository.EventRepository;
 import com.Flow.Backend.repository.PostRepository;
 import com.Flow.Backend.repository.UserRepository;
 import com.Flow.Backend.utils.JwtUtils;
@@ -41,6 +43,8 @@ public class UserService {
     private CommunityRepository communityRepository;
     @Autowired
     private PostRepository postRepository;
+    @Autowired
+    private EventRepository eventRepository;
     @Transactional
     public String register(RegisterBody registerBody){
         if (userRepository.findByEmail(registerBody.getEmail()).isPresent()) {
@@ -106,6 +110,7 @@ public class UserService {
             return dto;
         }).collect(Collectors.toList());
     }
+    @Transactional
     public List<UserModel> searchUsers(String username) {
         return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(username, username);
     }
@@ -174,10 +179,29 @@ public class UserService {
                     return postDTO;
                 })
                 .toList();
+        List<EventModel> userEvents = eventRepository.findAll().stream()
+                .filter(event ->
+                        event.getUser().getUsername().equals(username)
+                                || event.getJoinedUsers().contains(username))
+                .toList();
+
+        List<EventDetailsDTO> eventDTOs = userEvents.stream().map(event -> {
+            EventDetailsDTO e = new EventDetailsDTO();
+            e.setId(event.getId());
+            e.setTitle(event.getTitle());
+            e.setDescription(event.getDescription());
+            e.setLocation(event.getLocation());
+            e.setHostedBy(event.getHostedBy());
+            e.setCreatedAt(event.getCreatedAt());
+            e.setCommunityId(event.getCommunity() != null ? event.getCommunity().getId() : null);
+            e.setCommunityName(event.getCommunity() != null ? event.getCommunity().getName() : null);
+            return e;
+        }).toList();
         dto.setFollower(followers);
         dto.setFollowing(following);
         dto.setCommunities(communities);
         dto.setPostsDetails(posts);
+        dto.setEvents(eventDTOs);
         return dto;
     }
 
@@ -272,10 +296,29 @@ public class UserService {
                     return postDTO;
                 })
                 .toList();
+        List<EventModel> userEvents = eventRepository.findAll().stream()
+                .filter(event ->
+                        event.getUser().getUsername().equals(username)
+                                || event.getJoinedUsers().contains(username))
+                .toList();
+
+        List<EventDetailsDTO> eventDTOs = userEvents.stream().map(event -> {
+            EventDetailsDTO e = new EventDetailsDTO();
+            e.setId(event.getId());
+            e.setTitle(event.getTitle());
+            e.setDescription(event.getDescription());
+            e.setLocation(event.getLocation());
+            e.setHostedBy(event.getHostedBy());
+            e.setCreatedAt(event.getCreatedAt());
+            e.setCommunityId(event.getCommunity() != null ? event.getCommunity().getId() : null);
+            e.setCommunityName(event.getCommunity() != null ? event.getCommunity().getName() : null);
+            return e;
+        }).toList();
         dto.setFollower(followers);
         dto.setFollowing(following);
         dto.setCommunities(communities);
         dto.setPostsDetails(posts);
+        dto.setEvents(eventDTOs);
         return dto;
     }
 }

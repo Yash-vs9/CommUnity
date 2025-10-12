@@ -15,7 +15,7 @@ public class ProfileDTO {
     private List<String> follow_req;
     private List<PostsDetails> postsDetails;
     private List<CommunityProfileDTO> communities;
-
+    private List<EventDetailsDTO> events;
     public List<String> getFollow_req() {
         return follow_req;
     }
@@ -110,5 +110,13 @@ public class ProfileDTO {
 
     public void setBio(String bio) {
         this.bio = bio;
+    }
+
+    public List<EventDetailsDTO> getEvents() {
+        return events;
+    }
+
+    public void setEvents(List<EventDetailsDTO> events) {
+        this.events = events;
     }
 }
