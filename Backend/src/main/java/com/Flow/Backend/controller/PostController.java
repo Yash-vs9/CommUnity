@@ -3,6 +3,7 @@ package com.Flow.Backend.controller;
 import com.Flow.Backend.DTO.CommentDTO;
 import com.Flow.Backend.DTO.CreatePost;
 import com.Flow.Backend.DTO.EditPostDTO;
+import com.Flow.Backend.DTO.PostWithCommentsDTO;
 import com.Flow.Backend.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.parameters.P;
@@ -39,5 +40,9 @@ public class PostController {
     @PostMapping("/delete/{postId}/{commentId}")
     public String deletecomment(@PathVariable Long postId,@PathVariable Long commentId){
         return postService.deleteComment(postId,commentId);
+    }
+    @GetMapping("/getPostWithComments/{postId}")
+    public PostWithCommentsDTO getPostwithComments(@PathVariable Long postId){
+        return postService.getPostWithComments(postId);
     }
 }
