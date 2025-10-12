@@ -4,6 +4,7 @@ import com.Flow.Backend.DTO.CommentDTO;
 import com.Flow.Backend.DTO.CreatePost;
 import com.Flow.Backend.DTO.EditPostDTO;
 import com.Flow.Backend.exceptions.AccessDeniedException;
+import com.Flow.Backend.exceptions.CommunityNotFoundException;
 import com.Flow.Backend.exceptions.PostNotFoundException;
 import com.Flow.Backend.model.Comment;
 import com.Flow.Backend.model.CommunityModel;
@@ -83,6 +84,7 @@ public class PostService {
         postRepository.save(post);
         return "Edited Successfully";
     }
+    @Transactional
     public String likeOrDislikePost(Long postId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -110,9 +112,10 @@ public class PostService {
             return "Post liked successfully";
         }
     }
+    @Transactional
     public String  postComment(CommentDTO comment){
         PostModel post=postRepository.findById(comment.getPostId())
-                .orElseThrow(()->new PostNotFoundException("Query Not found"));
+                .orElseThrow(()->new PostNotFoundException("Post Not found"));
         Comment commentObj=new Comment();
         commentObj.setPost(post);
         commentObj.setReply(comment.getReply());
@@ -121,6 +124,27 @@ public class PostService {
         post.getComments().add(commentObj);
         postRepository.save(post);
         return "The comment has been created seuccessfully";
+    }
+    @Transactional
+    public  String deleteComment(Long postId,Long commentId){
+        String currentUsername=SecurityContextHolder.getContext().getAuthentication().getName();
+        PostModel post=postRepository.findById(postId)
+                .orElseThrow(()-> new PostNotFoundException("Post Not found"));
+        Comment comment = post.getComments().stream()
+                .filter(c->c.getId().equals(commentId))
+                .findFirst()
+                .orElseThrow(()-> new CommunityNotFoundException("Comment Not Found"));
+        CommunityModel community=post.getCommunity();
+
+        boolean isCommentOwner=comment.getUsername().equals(currentUsername);
+        boolean isAdmin=community.getAdmin().contains(currentUsername);
+        if(!isCommentOwner&&isAdmin){
+            throw new AccessDeniedException("You are not authorized to delete this comment");
+        }
+        post.getComments().remove(commentId);
+        postRepository.save(post);
+        return "Comment Deleted Succeessfully by "+ currentUsername;
+
     }
 
 }
