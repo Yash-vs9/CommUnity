@@ -44,5 +44,9 @@ public class UserController {
         List<UserModel> users = userService.searchUsers(query);
         return ResponseEntity.ok(users);
     }
+    @GetMapping("/getProfile")
+    public UserModel getProfile(){
+        return userService.getProfile();
+    }
 
 }
