@@ -278,6 +278,7 @@ public class CommunityService {
         CommunityDetailsDTO dto = new CommunityDetailsDTO();
         dto.setId(community.getId());
         dto.setName(community.getName());
+        dto.setLogoUrl(community.getLogoUrl());
         dto.setDescription(community.getDescription());
         dto.setCreatedByUser(community.getCreatedByUser());
 
