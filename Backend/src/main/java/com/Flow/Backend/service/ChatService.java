@@ -1,13 +1,7 @@
 package com.Flow.Backend.service;
 
-import com.Flow.Backend.model.Chat;
-import com.Flow.Backend.model.CommunityModel;
-import com.Flow.Backend.model.Message;
-import com.Flow.Backend.model.PostModel;
-import com.Flow.Backend.repository.ChatRepository;
-import com.Flow.Backend.repository.CommunityRepository;
-import com.Flow.Backend.repository.MessageRepository;
-import com.Flow.Backend.repository.PostRepository;
+import com.Flow.Backend.model.*;
+import com.Flow.Backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import reactor.core.publisher.Mono;
@@ -26,7 +20,8 @@ public class ChatService {
     private ChatRepository chatRepository;
     @Autowired
     private MessageRepository messageRepository;
-
+    @Autowired
+    private EventRepository eventRepository;
     public Mono<String> processMessage(String message) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
@@ -39,7 +34,7 @@ public class ChatService {
         // Fetch all relevant data from DB
         List<CommunityModel> communities = communityRepository.findAll();
         List<PostModel> posts = postRepository.findAll();
-
+        List<EventModel> events= eventRepository.findAll();
         String communityData = communities.stream()
                 .map(c -> "Community: " + c.getName() + " - " + c.getDescription())
                 .collect(Collectors.joining("\n"));
@@ -47,7 +42,9 @@ public class ChatService {
         String postData = posts.stream()
                 .map(p -> "Post: " + p.getTitle() + " by " + p.getCreatedByUser())
                 .collect(Collectors.joining("\n"));
-
+        String eventData= events.stream()
+                .map(e-> "Events: "+ e.getTitle() + "the description "+ e.getDescription() + " hosted by " + e.getHostedBy())
+                .collect(Collectors.joining("\n"));
         String previous = chat.getMessages().stream()
                 .map(m -> m.getRole() + ": " + m.getContent())
                 .collect(Collectors.joining("\n"));
@@ -60,12 +57,15 @@ public class ChatService {
 
             ---POST DATA---
             %s
-
+            
+            ---EVENT DATA---
+            %s
+            
             ---CHAT HISTORY---
             %s
 
             User: %s
-            """.formatted(communityData, postData, previous, message);
+            """.formatted(communityData, postData,eventData, previous, message);
 
         // Save user message
         Message userMsg = new Message();
