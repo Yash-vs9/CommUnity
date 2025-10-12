@@ -1,8 +1,6 @@
 package com.Flow.Backend.service;
 
-import com.Flow.Backend.DTO.CommentDTO;
-import com.Flow.Backend.DTO.CreatePost;
-import com.Flow.Backend.DTO.EditPostDTO;
+import com.Flow.Backend.DTO.*;
 import com.Flow.Backend.exceptions.AccessDeniedException;
 import com.Flow.Backend.exceptions.CommunityNotFoundException;
 import com.Flow.Backend.exceptions.PostNotFoundException;
@@ -146,5 +144,32 @@ public class PostService {
         return "Comment Deleted Succeessfully by "+ currentUsername;
 
     }
+    @Transactional(readOnly = true)
+    public PostWithCommentsDTO getPostWithComments(Long postId) {
+        PostModel post = postRepository.findById(postId)
+                .orElseThrow(() -> new PostNotFoundException("Post not found with id: " + postId));
 
+        PostWithCommentsDTO dto = new PostWithCommentsDTO();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setDescription(post.getDescription());
+        dto.setImageUrl(post.getImageUrl());
+        dto.setCreatedByUser(post.getCreatedByUser());
+        dto.setLikes(post.getLikes());
+
+        // Map comments
+        List<CommentResponseDTO> commentDTOs = post.getComments().stream()
+                .map(c -> {
+                    CommentResponseDTO commentDTO = new CommentResponseDTO();
+                    commentDTO.setId(c.getId());
+                    commentDTO.setUsername(c.getUsername());
+                    commentDTO.setReply(c.getReply());
+                    return commentDTO;
+                })
+                .toList();
+
+        dto.setComments(commentDTOs);
+
+        return dto;
+    }
 }
