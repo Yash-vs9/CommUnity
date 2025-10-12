@@ -30,17 +30,17 @@ public class CommunityModel {
     private List<PostModel> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "community", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostModel> events = new ArrayList<>();
+    private List<EventModel> events = new ArrayList<>();
 
     public Long getId() {
         return id;
     }
 
-    public List<PostModel> getEvents() {
+    public List<EventModel> getEvents() {
         return events;
     }
 
-    public void setEvents(List<PostModel> events) {
+    public void setEvents(List<EventModel> events) {
         this.events = events;
     }
 

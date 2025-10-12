@@ -163,4 +163,28 @@ public class EventService {
             return dto;
         }).collect(Collectors.toList());
     }
+    @Transactional
+    public List<EventDetailsDTO> getAllCommunitiesEvents(Long id){
+        CommunityModel community=communityRepository.findById(id)
+                .orElseThrow(()->new CommunityNotFoundException("Community not found "));
+        List<EventModel> events=community.getEvents();
+        return events.stream().map(event -> {
+            EventDetailsDTO dto = new EventDetailsDTO();
+            dto.setId(event.getId());
+            dto.setTitle(event.getTitle());
+            dto.setDescription(event.getDescription());
+            dto.setHostedBy(event.getHostedBy());
+            dto.setLocation(event.getLocation());
+            dto.setCreatedAt(event.getCreatedAt());
+
+            if (event.getCommunity() != null) {
+                dto.setCommunityId(event.getCommunity().getId());
+                dto.setCommunityName(event.getCommunity().getName());
+            } else {
+                dto.setCommunityId(null);
+                dto.setCommunityName("General");
+            }
+
+            return dto;
+        }).collect(Collectors.toList());    }
 }
