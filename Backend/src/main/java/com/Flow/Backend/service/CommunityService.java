@@ -319,4 +319,25 @@ public class CommunityService {
         dto.setMembers(memberDTOs);
         return dto;
     }
+    @Transactional
+    public String join(Long communityId) {
+        // Get username of logged-in user
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // Fetch the community
+        CommunityModel community = communityRepository.findById(communityId)
+                .orElseThrow(() -> new CommunityNotFoundException("Community not found with id: " + communityId));
+
+        // Check if user is already a member
+        if (community.getMembers().contains(username)) {
+            return "You are already a member of this community";
+        }
+
+
+        // Add user to members list
+        community.getMembers().add(username);
+        communityRepository.save(community);
+
+        return "You has join the community "+community.getName()+" successfully";
+    }
 }
