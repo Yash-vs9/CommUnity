@@ -39,7 +39,7 @@ public class PostController {
     public String createComment(@RequestBody CommentDTO commentDTO){
         return postService.postComment(commentDTO);
     }
-    @PostMapping("/delete/{postId}/{commentId}")
+    @DeleteMapping("/delete/{postId}/{commentId}")
     public String deletecomment(@PathVariable Long postId,@PathVariable Long commentId){
         return postService.deleteComment(postId,commentId);
     }
@@ -50,5 +50,9 @@ public class PostController {
     @GetMapping("/getPostWithComments/loginUser")
     public List<PostWithCommentsDTO> getPostOfLoginUser(){
         return postService.getPostsByLoggedInUser();
+    }
+    @GetMapping("/getTop10Posts")
+    public List<PostWithCommentsDTO> getTop10Posts(){
+        return postService.getTop10Posts();
     }
 }

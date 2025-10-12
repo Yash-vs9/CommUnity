@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface PostRepository extends JpaRepository<PostModel,Long> {
     List<PostModel> findByCreatedByUser(String createdByUser);
-
+    // Fetch the latest 10 posts based on creation date
+    List<PostModel> findTop10ByOrderByCreatedAtDesc();
 }
