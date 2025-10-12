@@ -213,4 +213,31 @@ public class PostService {
             return dto;
         }).toList();
     }
+    @Transactional
+    public List<PostWithCommentsDTO> getTop10Posts(){
+        List<PostModel> posts=postRepository.findTop10ByOrderByCreatedAtDesc();
+        return posts.stream().map(post -> {
+            PostWithCommentsDTO dto = new PostWithCommentsDTO();
+            dto.setId(post.getId());
+            dto.setTitle(post.getTitle());
+            dto.setDescription(post.getDescription());
+            dto.setImageUrl(post.getImageUrl());
+            dto.setCreatedByUser(post.getCreatedByUser());
+            dto.setLikes(post.getLikes());
+            dto.setCreatedAt(post.getCreatedAt());
+
+            // Convert comments
+            List<CommentResponseDTO> commentDTOs = post.getComments().stream().map(comment -> {
+                CommentResponseDTO cDto = new CommentResponseDTO();
+                cDto.setId(comment.getId());
+                cDto.setUsername(comment.getUsername());
+                cDto.setReply(comment.getReply());
+                cDto.setCreatedAt(comment.getCreatedAt());
+                return cDto;
+            }).toList();
+
+            dto.setComments(commentDTOs);
+            return dto;
+        }).toList();
+    }
 }
