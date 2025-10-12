@@ -9,21 +9,20 @@ import com.Flow.Backend.model.CommunityModel;
 import com.Flow.Backend.model.MyUserDetailService;
 import com.Flow.Backend.model.UserModel;
 import com.Flow.Backend.repository.CommunityRepository;
+import com.Flow.Backend.repository.PostRepository;
 import com.Flow.Backend.repository.UserRepository;
 import com.Flow.Backend.utils.JwtUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +39,8 @@ public class UserService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private CommunityRepository communityRepository;
+    @Autowired
+    private PostRepository postRepository;
     @Transactional
     public String register(RegisterBody registerBody){
         if (userRepository.findByEmail(registerBody.getEmail()).isPresent()) {
@@ -108,9 +109,74 @@ public class UserService {
     public List<UserModel> searchUsers(String username) {
         return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(username, username);
     }
-    public UserModel getProfile(){
-        return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
-                .orElseThrow(()-> new UserNotFoundException("User not found"));
+    @Transactional
+    public ProfileDTO getProfile(){
+        String username=SecurityContextHolder.getContext().getAuthentication().getName();
+        UserModel user = userRepository.findByUsername(username)
+                .orElseThrow(()->new UserNotFoundException("User not found"));
+        ProfileDTO dto=new ProfileDTO();
+        dto.setUsername(username);
+        dto.setFirstName(user.getFirstName());
+        dto.setLastName(user.getLastName());
+        dto.setProfilePic(user.getProfilePic());
+        dto.setEmail(user.getEmail());
+        dto.setId(user.getId());
+        List<FollowerDTO> followers = user.getFollowers().stream()
+                .map(followerUsername -> userRepository.findByUsername(followerUsername)
+                        .map(followerUser -> {
+                            FollowerDTO followDTO = new FollowerDTO();
+                            followDTO.setId(followerUser.getId());
+                            followDTO.setUsername(followerUser.getUsername());
+                            followDTO.setProfilePic(followerUser.getProfilePic());
+                            return followDTO;
+                        })
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+
+        List<FollowerDTO> following = user.getFollowing().stream()
+                .map(followingUsername -> userRepository.findByUsername(followingUsername)
+                        .map(followerUser -> {
+                            FollowerDTO followDTO = new FollowerDTO();
+                            followDTO.setId(followerUser.getId());
+                            followDTO.setUsername(followerUser.getUsername());
+                            followDTO.setProfilePic(followerUser.getProfilePic());
+                            return followDTO;
+                        })
+                        .orElse(null))
+                .filter(Objects::nonNull)
+                .toList();
+        List<CommunityProfileDTO> communities = communityRepository
+                .findByMembersContainsOrAdminContains(username, username)
+                .stream()
+                .map(c -> {
+                    String role = c.getAdmin().contains(username) ? "ADMIN" : "MEMBER";
+                    CommunityProfileDTO communityDTO = new CommunityProfileDTO();
+                    communityDTO.setId(c.getId());
+                    communityDTO.setName(c.getName());
+                    communityDTO.setLogoUrl(c.getLogoUrl());
+                    communityDTO.setRole(role);
+                    return communityDTO;
+                })
+                .toList();
+        List<PostsDetails> posts = postRepository.findByCreatedByUser(username)
+                .stream()
+                .map(p -> {
+                    PostsDetails postDTO = new PostsDetails();
+                    postDTO.setId(p.getId());
+                    postDTO.setTitle(p.getTitle());
+                    postDTO.setDescription(p.getDescription());
+                    postDTO.setImageUrl(p.getImageUrl());
+                    postDTO.setCreatedAt(p.getCreatedAt());
+                    postDTO.setCommunityId(p.getCommunity() != null ? p.getCommunity().getId() : null);
+                    return postDTO;
+                })
+                .toList();
+        dto.setFollower(followers);
+        dto.setFollowing(following);
+        dto.setCommunities(communities);
+        dto.setPostsDetails(posts);
+        return dto;
     }
 
 }
