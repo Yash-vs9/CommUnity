@@ -1,6 +1,7 @@
 package com.Flow.Backend.model;
 
 import jakarta.persistence.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class EventModel {
     private String location;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-
+    private String createdBy= SecurityContextHolder.getContext().getAuthentication().getName();
     @ManyToOne
     @JoinColumn(name = "community_id")
     private CommunityModel community;
@@ -122,4 +123,11 @@ public class EventModel {
         this.location = location;
     }
 
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
 }

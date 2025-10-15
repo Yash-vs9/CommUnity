@@ -45,4 +45,8 @@ public class EventController {
     public List<EventDetailsDTO> getAllCommunityEvents(@PathVariable Long id){
         return eventService.getAllCommunitiesEvents(id);
     }
+    @GetMapping("/allEventsOfCommunityOfUser")
+    public List<EventDetailsDTO> getAllEventsOfCommunityOfUser(){
+        return eventService.getAllCommunitiesEventsOfUser();
+    }
 }

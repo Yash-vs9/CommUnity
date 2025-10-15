@@ -11,7 +11,7 @@ public class EventDetailsDTO {
     private String hostedBy;
     private String location;
     private LocalDateTime createdAt;
-
+    private String createdBy;
     public String getTitle() {
         return title;
     }
@@ -74,5 +74,13 @@ public class EventDetailsDTO {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
     }
 }

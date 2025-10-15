@@ -151,7 +151,7 @@ public class EventService {
             dto.setHostedBy(event.getHostedBy());
             dto.setLocation(event.getLocation());
             dto.setCreatedAt(event.getCreatedAt());
-
+            dto.setCreatedBy(event.getCreatedBy());
             if (event.getCommunity() != null) {
                 dto.setCommunityId(event.getCommunity().getId());
                 dto.setCommunityName(event.getCommunity().getName());
@@ -176,7 +176,7 @@ public class EventService {
             dto.setHostedBy(event.getHostedBy());
             dto.setLocation(event.getLocation());
             dto.setCreatedAt(event.getCreatedAt());
-
+            dto.setCreatedBy(event.getCreatedBy());
             if (event.getCommunity() != null) {
                 dto.setCommunityId(event.getCommunity().getId());
                 dto.setCommunityName(event.getCommunity().getName());
@@ -187,4 +187,33 @@ public class EventService {
 
             return dto;
         }).collect(Collectors.toList());    }
+    @Transactional
+    public List<EventDetailsDTO> getAllCommunitiesEventsOfUser(){
+        String username=SecurityContextHolder.getContext().getAuthentication().getName();
+        List<EventModel> event1=eventRepository.findAllByOrderByCreatedAtDesc();
+        return event1.stream().map(event->{
+            EventDetailsDTO dto = new EventDetailsDTO();
+            if (event.getHostedBy().equals(username) || event.getCreatedBy().equals(username)){
+                dto.setId(event.getId());
+                dto.setTitle(event.getTitle());
+                dto.setDescription(event.getDescription());
+                dto.setHostedBy(event.getHostedBy());
+                dto.setLocation(event.getLocation());
+                dto.setCreatedBy(event.getCreatedBy());
+                dto.setCreatedAt(event.getCreatedAt());
+                if (event.getCommunity() != null){
+                    dto.setCommunityId(event.getCommunity().getId());
+                    dto.setCommunityName(event.getCommunity().getName());
+                }
+                else {
+                    dto.setCommunityId(null);
+                    dto.setCommunityName("General");
+                }
+                return dto;
+            }
+            else {
+                return null;
+            }
+        }).collect(Collectors.toList());
+    }
 }
