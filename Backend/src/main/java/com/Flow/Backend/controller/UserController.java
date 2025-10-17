@@ -37,8 +37,8 @@ public class UserController {
         return userService.getUserCommunitiesById(userId);
    }
     @GetMapping("/search")
-    public ResponseEntity<List<UserModel>> searchUsers(@RequestParam("query") String query) {
-        List<UserModel> users = userService.searchUsers(query);
+    public ResponseEntity<List<UserSearchDTO>> searchUsers(@RequestParam("query") String query) {
+        List<UserSearchDTO> users = userService.searchUsers(query);
         return ResponseEntity.ok(users);
     }
     @GetMapping("/getProfile")

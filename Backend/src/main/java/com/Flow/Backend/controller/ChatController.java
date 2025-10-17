@@ -1,25 +1,25 @@
 package com.Flow.Backend.controller;
 
-import com.Flow.Backend.service.ChatService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import reactor.core.publisher.Mono;
+import com.Flow.Backend.model.ChatMessage;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
 
-import java.util.Map;
-
-@RestController
-@RequestMapping("/api")
+@Controller
 public class ChatController {
-    @Autowired
-    private ChatService chatService;
 
-    @PostMapping("/input")
-    public Mono<Map<String ,String>> chat(@RequestBody Map<String ,String> body){
-        String message=body.get("message");
-        return chatService.processMessage(message)
-                .map(reply->Map.of("reply",reply));
+    // Client sends to /app/chat.sendMessage
+    @MessageMapping("/chat.sendMessage")
+    @SendTo("/topic/public")
+    public ChatMessage sendMessage(ChatMessage message) {
+        return message; // broadcast to all subscribers
+    }
+
+    // Optional: handle join messages
+    @MessageMapping("/chat.addUser")
+    @SendTo("/topic/public")
+    public ChatMessage addUser(ChatMessage message) {
+        message.setType(ChatMessage.MessageType.JOIN);
+        return message;
     }
 }

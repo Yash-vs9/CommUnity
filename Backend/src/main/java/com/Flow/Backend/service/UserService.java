@@ -111,8 +111,21 @@ public class UserService {
         }).collect(Collectors.toList());
     }
     @Transactional
-    public List<UserModel> searchUsers(String username) {
-        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(username, username);
+    public List<UserSearchDTO> searchUsers(String username) {
+        // fetch UserModel list
+        List<UserModel> users = userRepository
+                .findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCase(username, username);
+
+        // map UserModel → UserSearchDTO
+        return users.stream()
+                .map(user -> new UserSearchDTO(
+                        user.getId(),
+                        user.getUsername(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getProfilePic()
+                ))
+                .collect(Collectors.toList());
     }
     @Transactional
     public ProfileDTO getProfile(){
