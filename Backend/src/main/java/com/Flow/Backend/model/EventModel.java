@@ -28,7 +28,7 @@ public class EventModel {
     private String location;
 
     private LocalDateTime createdAt = LocalDateTime.now();
-    private String createdBy= SecurityContextHolder.getContext().getAuthentication().getName();
+    private String createdBy;
     @ManyToOne
     @JoinColumn(name = "community_id")
     private CommunityModel community;
